@@ -85,6 +85,7 @@ const SettingsPanel = ({ settings, setSettings, closePanel }) => {
           >
             <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
             <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+
           </select>
         </div>
       </div>

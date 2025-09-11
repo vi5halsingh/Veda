@@ -25,6 +25,7 @@ export default function Sidebar({ onSelectChat, selectedChatId }) {
   const [menuOpenId, setMenuOpenId] = useState(null);
   const [newChatTitle, setNewChatTitle] = useState('');
   const [showSettingsCard, setShowSettingsCard] = useState(false);
+   const [showMenu , setShowMenu] = useState(false);
   const Navigate = useNavigate();
 
   // refs for click-outside
