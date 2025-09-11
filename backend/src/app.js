@@ -10,7 +10,7 @@ app.use(express.static(path.join(__dirname, "../public")));
 connectDB();
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "https://veda-kx60.onrender.com"],
     credentials: true,
   })
 );
