@@ -48,11 +48,11 @@ const SettingsPanel = ({ settings, setSettings, closePanel }) => {
             onChange={(e) => setSettings({ ...settings, role: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none bg-white"
           >
-            <option value="default">veda</option>
+            <option value="default">Veda</option>
             <option value="funny">Funny</option>
             <option value="spiritual">Spiritual</option>
             <option value="Girl">Girl</option>
-            <option value="kaliyug">Kaliyug Mindset</option>
+            <option value="Gen-Z">Gen-Z</option>
           </select>
         </div>
         

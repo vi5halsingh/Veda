@@ -45,16 +45,16 @@ export default function Signup(props) {
         });
         return;
       }
-      toast.error("Something went wrong", {
-        position: "bottom-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        closeOnClick: true,
-      });
+      // toast.error("Something went wrong", {
+      //   position: "bottom-right",
+      //   autoClose: 2000,
+      //   hideProgressBar: false,
+      //   pauseOnHover: true,
+      //   draggable: true,
+      //   progress: undefined,
+      //   theme: "light",
+      //   closeOnClick: true,
+      // });
     }
   };
   const handleSetType = (e) => {
