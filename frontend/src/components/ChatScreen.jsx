@@ -48,10 +48,10 @@ const SettingsPanel = ({ settings, setSettings, closePanel }) => {
             onChange={(e) => setSettings({ ...settings, role: e.target.value })}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none bg-white"
           >
-            <option value="default">Default</option>
+            <option value="default">veda</option>
             <option value="funny">Funny</option>
-            <option value="spiritual">Spiritual Guru</option>
-            <option value="homie">Homie Friend</option>
+            <option value="spiritual">Spiritual</option>
+            <option value="Girl">Girl</option>
             <option value="kaliyug">Kaliyug Mindset</option>
           </select>
         </div>
@@ -85,9 +85,6 @@ const SettingsPanel = ({ settings, setSettings, closePanel }) => {
           >
             <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
             <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
-
-            {/* You can add more models here if they become available */}
-            {/* <option value="gemini-pro">Gemini Pro</option> */}
           </select>
         </div>
       </div>
@@ -115,7 +112,17 @@ export default function ChatScreen({ chat, socket, modelSettings, setModelSettin
       const allMessages = await api.get(`/chat/${chat.id}`);
       setMessages(allMessages.data.messages);
     } catch (error) {
-      toast.error("Could not load conversation");
+      toast.error("Could not load conversation",{
+         position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          closeOnClick: true,
+
+      });
     }
   };
 
@@ -131,7 +138,14 @@ export default function ChatScreen({ chat, socket, modelSettings, setModelSettin
     };
     const handleAiError = (errorPayload) => {
       setIsTyping(false);
-      toast.error(errorPayload.message);
+      toast.error(errorPayload.message , { position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          closeOnClick: true,});
       setMessages((prev) => prev.slice(0, -1));
     };
 

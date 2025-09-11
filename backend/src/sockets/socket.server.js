@@ -54,7 +54,7 @@ async function initSocketServer(httpServer) {
       }
 
       const [message, vector] = await Promise.all([
-        messageModel.create({
+        new messageModel({
           user: socket.user._id,
           chat: messagePayload.chat,
           content: messagePayload.content,
@@ -110,11 +110,12 @@ async function initSocketServer(httpServer) {
         const response = await aiservice.generateResponse([...ltm, ...stm],{
           model: messagePayload.model,
           temperature: messagePayload.temperature,
-          systemInstruction: messagePayload.systemInstruction,
+          role: messagePayload.role,
         });
+     
         const [responseVector, responseMessage] = await Promise.all([
           aiservice.generateVector(response),
-          messageModel.create({
+          new messageModel({
             user: socket.user._id,
             chat: messagePayload.chat,
             content: response,
@@ -137,6 +138,8 @@ async function initSocketServer(httpServer) {
   
         // Decrement token limit and save the user
         user.tokenLimit -= 1;
+        await message.save();
+        await responseMessage.save();
         await user.save();
       } catch(error) {
         socket.emit("ai-error", { message: "Failed to get a response from Veda-AI." });
