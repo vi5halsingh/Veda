@@ -40,18 +40,19 @@ async function initSocketServer(httpServer) {
       socket.emit("typing-start");
 
       let user = socket.user;
+      // console.log(user);
 
       // Check if the token reset time has passed
-      if (new Date() > user.tokenResetAt) {
-        user.tokenLimit = 30;
-        user.tokenResetAt = new Date(
-          new Date().getTime() + 24 * 60 * 60 * 1000
-        );
-        await user.save();
-      }
-
+      // if (new Date() > user.tokenResetAt) {
+      //   user.tokenLimit = 30;
+      //   user.tokenResetAt = new Date(
+      //     new Date().getTime() + 24 * 60 * 60 * 1000
+      //   );
+      //   await user.save();
+      // }
+      socket.emit('tokenLimit',user.tokenLimit)
       if (user.tokenLimit <= 0) {
-        socket.emit("token-limit-exceeded", user.tokenResetAt);
+        socket.emit("token-limit-exceeded", user.tokenLimit);
         return;
       }
 

@@ -28,6 +28,7 @@ export default function Sidebar({ onSelectChat, selectedChatId }) {
   const [newChatTitle, setNewChatTitle] = useState("");
   const [showSettingsCard, setShowSettingsCard] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [token, setToken] = useState(0);
   const Navigate = useNavigate();
 
   // refs for click-outside
@@ -344,6 +345,9 @@ export default function Sidebar({ onSelectChat, selectedChatId }) {
           <div className="p-2">
             <div className="px-3 py-2 text-sm text-black border-b border-gray-200">
               {user?.fullname?.firstname || "User"}
+            </div>
+            <div className="px-3 py-2 text-sm text-black border-b border-gray-200">
+              Token : {user?.token || "10"}
             </div>
             {/* keep only logout action as per existing functionality */}
             <button

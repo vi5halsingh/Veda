@@ -32,6 +32,7 @@ async function userRegister(req, res) {
       email: user.email,
       id: user._id,
       fullname: user.fullname,
+      token: user.tokenLimit,
     },
   });
 }
@@ -60,6 +61,7 @@ async function loginUser(req, res) {
       email: user.email,
       id: user._id,
       fullname: user.fullname,
+      token: user.tokenLimit,
     },
   });
 }

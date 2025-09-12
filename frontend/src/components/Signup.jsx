@@ -30,6 +30,7 @@ export default function Signup(props) {
           closeOnClick: true,
         });
         navigate("/");
+        return;
       }
     } catch (error) {
       if (error.status === 409) {
@@ -60,7 +61,6 @@ export default function Signup(props) {
   const handleSetType = (e) => {
     e.preventDefault();
     props.setType((p) => "login");
-    
   };
 
   return (
