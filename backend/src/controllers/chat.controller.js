@@ -25,7 +25,7 @@ async function createChat(req, res) {
 async function getChats(req, res) {
   try {
     const chats = await chatModel
-      .find({ user: req.user._id })
+      .find({ user: req.user?._id })
       .sort({ lastactivity: -1 })
       .lean();
 
@@ -43,15 +43,16 @@ async function getChats(req, res) {
 }
 
 async function getChatForId(req, res) {
-  const messages = await messageModel.find({chat:req.params.id}).lean()
+  const messages = await messageModel.find({ chat: req.params.id }).lean();
   res.status(200).json({
-    messages
-  })
+    messages,
+  });
 }
 
 const updateChat = async (req, res) => {
   try {
-    if (!req.body.title) return res.status(400).json({ error: 'Title is required' });
+    if (!req.body.title)
+      return res.status(400).json({ error: "Title is required" });
 
     const chat = await chatModel.findByIdAndUpdate(
       req.params.id,
@@ -59,7 +60,7 @@ const updateChat = async (req, res) => {
       { new: true } // returns updated chat
     );
 
-    if (!chat) return res.status(404).json({ error: 'Chat not found' });
+    if (!chat) return res.status(404).json({ error: "Chat not found" });
 
     res.json({
       chat: {
@@ -69,25 +70,24 @@ const updateChat = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Update error:', error);
+    console.error("Update error:", error);
     res.status(500).json({ error: error.message });
   }
 };
 
-
 const deleteChat = async (req, res) => {
   try {
     const chat = await chatModel.findByIdAndDelete(req.params.id);
-   
-    if (!chat) return res.status(404).json({ error: 'Chat not found' });
-    
+
+    if (!chat) return res.status(404).json({ error: "Chat not found" });
+
     // Delete associated messages
     await messageModel.deleteMany({ chat: req.params.id });
-    
+
     res.json({ success: true });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to delete chat' });
+    res.status(500).json({ error: "Failed to delete chat" });
   }
 };
 
-module.exports = { createChat, getChats ,getChatForId, updateChat, deleteChat};
+module.exports = { createChat, getChats, getChatForId, updateChat, deleteChat };
