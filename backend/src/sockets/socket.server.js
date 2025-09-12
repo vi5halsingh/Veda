@@ -44,7 +44,9 @@ async function initSocketServer(httpServer) {
       // Check if the token reset time has passed
       if (new Date() > user.tokenResetAt) {
         user.tokenLimit = 30;
-        user.tokenResetAt = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+        user.tokenResetAt = new Date(
+          new Date().getTime() + 24 * 60 * 60 * 1000
+        );
         await user.save();
       }
 
@@ -54,7 +56,7 @@ async function initSocketServer(httpServer) {
       }
 
       const [message, vector] = await Promise.all([
-        new messageModel({
+        messageModel.create({
           user: socket.user._id,
           chat: messagePayload.chat,
           content: messagePayload.content,
@@ -107,15 +109,17 @@ async function initSocketServer(httpServer) {
         };
       });
       try {
-        const response = await aiservice.generateResponse([...ltm, ...stm],{
+        const response = await aiservice.generateResponse([...ltm, ...stm], {
           model: messagePayload.model,
           temperature: messagePayload.temperature,
           role: messagePayload.role,
         });
-     
+
+        console.log(response);
+
         const [responseVector, responseMessage] = await Promise.all([
           aiservice.generateVector(response),
-          new messageModel({
+          messageModel.create({
             user: socket.user._id,
             chat: messagePayload.chat,
             content: response,
@@ -135,14 +139,15 @@ async function initSocketServer(httpServer) {
           content: response,
           chat: messagePayload.chat,
         });
-  
+
         // Decrement token limit and save the user
         user.tokenLimit -= 1;
-        await message.save();
-        await responseMessage.save();
+
         await user.save();
-      } catch(error) {
-        socket.emit("ai-error", { message: "Failed to get a response from Veda-AI." });
+      } catch (error) {
+        socket.emit("ai-error", {
+          message: "Failed to get a response from Veda-AI.",
+        });
       }
     });
   });

@@ -14,6 +14,7 @@ export default function Login(props) {
     // console.log(data);
     try {
       if (!data) return;
+
       const response = await api.post("/auth/login", data);
 
       if (response.status === 200) {
@@ -62,7 +63,6 @@ export default function Login(props) {
   const handleSetType = (e) => {
     e.preventDefault();
     props.setType((p) => "signup");
-    
   };
   return (
     <div className="flex w-full md:w-1/2 items-center justify-center p-8">
