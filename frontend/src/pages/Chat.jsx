@@ -20,7 +20,7 @@ const Chat = () => {
   }
   useEffect(() => {
     // Initialize socket connection
-    const newSocket = io("http://localhost:3000", {
+    const newSocket = io("https://veda-kx60.onrender.com", {
       withCredentials: true,
     });
     setSocket(newSocket);
