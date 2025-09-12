@@ -116,7 +116,7 @@ async function initSocketServer(httpServer) {
           role: messagePayload.role,
         });
 
-        console.log(response);
+        // console.log(response);
 
         const [responseVector, responseMessage] = await Promise.all([
           aiservice.generateVector(response),
