@@ -9,7 +9,7 @@ export default defineConfig({
   VitePWA({
     manifest: {
       name: "veda",
-      short_name: 'AI Assistant',
+      short_name: 'Veda',
       description: 'veda is AI assistant by @dino4dev',
       theme_color: '#000000',
       background_color: '#ffffff',
