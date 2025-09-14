@@ -9,6 +9,32 @@ export default function Login(props) {
     email: "",
     password: "",
   });
+    React.useEffect(() => {
+    const checkSessionExpiration = () => {
+      const user = localStorage.getItem("user");
+      const lastLoginTime = localStorage.getItem("lastLoginTime");
+      
+      if (user && lastLoginTime) {
+        const now = new Date().getTime();
+        const lastLogin = parseInt(lastLoginTime);
+        const hoursSinceLastLogin = (now - lastLogin) / (1000 * 60 * 60);
+        
+        if (hoursSinceLastLogin > 24) {
+          localStorage.removeItem("user");
+          localStorage.removeItem("lastLoginTime");
+          toast.info("Session expired. Please login again.", {
+            position: "bottom-right",
+            closeOnClick: true,
+            pauseOnHover: true,
+            autoClose: 1000,
+          });
+          navigate("/auth");
+        }
+      }
+    };
+
+    checkSessionExpiration();
+  }, [navigate]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     // console.log(data);
@@ -19,6 +45,8 @@ export default function Login(props) {
 
       if (response.status === 200) {
         localStorage.setItem("user", JSON.stringify(response.data.user));
+        navigate("/");
+         localStorage.setItem("lastLoginTime", new Date().getTime().toString());
         navigate("/");
       }
     } catch (error) {

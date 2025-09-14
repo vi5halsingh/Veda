@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import api from "../config/Api";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function Signup(props) {
+  const navigate = useNavigate();
   const [data, setData] = useState({
     email: "",
     fullname: {
@@ -44,18 +46,19 @@ export default function Signup(props) {
           theme: "light",
           closeOnClick: true,
         });
-        return;
+      }else{
+          toast.error("Something went wrong", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        closeOnClick: true,
+      });
       }
-      // toast.error("Something went wrong", {
-      //   position: "bottom-right",
-      //   autoClose: 2000,
-      //   hideProgressBar: false,
-      //   pauseOnHover: true,
-      //   draggable: true,
-      //   progress: undefined,
-      //   theme: "light",
-      //   closeOnClick: true,
-      // });
+    
     }
   };
   const handleSetType = (e) => {
