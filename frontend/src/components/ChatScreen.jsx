@@ -251,7 +251,7 @@ export default function ChatScreen({
     if(!deferredPrompt) return ;
     deferredPrompt.prompt()
     const {outcome} = await deferredPrompt.userChoice
-    console.log(outcome)
+    // console.log(outcome)
     setDeferredPrompt(null) 
     showDownloadApp(false)
   }
