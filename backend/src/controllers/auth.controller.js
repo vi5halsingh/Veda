@@ -23,8 +23,12 @@ async function userRegister(req, res) {
     password: hashPW,
   });
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-  res.cookie("token", token, { httpOnly: true });
-  // console.log(token);
+  
+  // Set cookie - simple settings for local development
+  res.cookie("token", token, {
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  });
 
   return res.status(200).json({
     msg: "user registered successfully",
@@ -52,8 +56,12 @@ async function loginUser(req, res) {
   }
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-  res.cookie("token", token, { httpOnly: true });
-  // console.log(token);
+  
+  // Set cookie - simple settings for local development
+  res.cookie("token", token, {
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  });
 
   return res.status(200).json({
     msg: "user logged in successfully",

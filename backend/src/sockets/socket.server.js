@@ -8,15 +8,37 @@ const { createMemory, queryMemory } = require("../services/vector.services");
 const { model } = require("mongoose");
 
 async function initSocketServer(httpServer) {
+  // Socket.IO CORS configuration - should match your frontend URLs
+  const allowedOrigins = [
+    "http://localhost:5173",      // Local Vite dev
+    "http://localhost:4173",      // Local Vite preview
+    // Add your deployed frontend URL here, for example:
+    // "https://your-frontend-app.vercel.app",
+    // "https://your-frontend-app.netlify.app",
+  ];
+
   const io = new Server(httpServer, {
     cors: {
-      origin: "http://localhost:5173",
+      origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.indexOf(origin) !== -1) {
+          callback(null, true);
+        } else {
+          console.log('Socket.IO blocked by CORS:', origin);
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
       credentials: true,
+      methods: ["GET", "POST"],
     },
+    transports: ['websocket', 'polling'], // Support both transports
   });
 
   io.use(async (socket, next) => {
     const cookies = cookie.parse(socket.handshake.headers?.cookie || "");
+    console.log(cookie.token)
 
     if (!cookies.token) {
       return next(new Error("Unauthorized: No token provided"));
@@ -35,7 +57,11 @@ async function initSocketServer(httpServer) {
   });
 
   io.on("connection", (socket) => {
+    console.log("connected to socket")
     socket.on("ai-message", async (messagePayload) => {
+      console.log(messagePayload)
+
+
       // Immediately notify the client that the AI is "typing"
       socket.emit("typing-start");
 
@@ -50,11 +76,16 @@ async function initSocketServer(httpServer) {
       //   );
       //   await user.save();
       // }
-      socket.emit('tokenLimit',user.tokenLimit)
+
+
+
+      socket.emit('tokenLimit', user.tokenLimit)
       if (user.tokenLimit <= 0) {
         socket.emit("token-limit-exceeded", user.tokenLimit);
         return;
       }
+
+
 
       const [message, vector] = await Promise.all([
         messageModel.create({
