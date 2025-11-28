@@ -38,7 +38,7 @@ async function initSocketServer(httpServer) {
 
   io.use(async (socket, next) => {
     const cookies = cookie.parse(socket.handshake.headers?.cookie || "");
-    console.log(cookie.token)
+    console.log("token from socket ",cookie.token)
 
     if (!cookies.token) {
       return next(new Error("Unauthorized: No token provided"));

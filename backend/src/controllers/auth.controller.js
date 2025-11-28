@@ -43,7 +43,7 @@ async function userRegister(req, res) {
 
 async function loginUser(req, res) {
   const { email, password } = req.body;
-
+  console.log("data from login", email , password)
   const user = await userModel.findOne({ email });
 
   if (!user) {
@@ -56,7 +56,7 @@ async function loginUser(req, res) {
   }
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-  
+  console.log("token from login", token)
   // Set cookie - simple settings for local development
   res.cookie("token", token, {
     httpOnly: true,
