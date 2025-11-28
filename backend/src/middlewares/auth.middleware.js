@@ -6,18 +6,24 @@ async function authUser(req, res, next) {
   const { token } = req.cookies;
 
   if (!token) {
-    return res.status(500).json("unauthorized user");
+    return res.status(401).json({ msg: "No token provided" });
   }
+  
   try {
-    const decode = await jwt.decode(token, process.env.JWT_SECRET);
+    // Use jwt.verify instead of jwt.decode to verify the signature
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const user = await userModel.findById(decode.id);
+    const user = await userModel.findById(decoded.id);
+    
+    if (!user) {
+      return res.status(401).json({ msg: "User not found" });
+    }
 
     req.user = user;
-
     next();
   } catch (error) {
-    res.status(401).json({ msg: "Unauthorized" });
+    console.error("Auth error:", error.message);
+    return res.status(401).json({ msg: "Invalid or expired token" });
   }
 }
 

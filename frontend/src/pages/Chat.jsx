@@ -12,16 +12,21 @@ const Chat = () => {
     temperature: 0.7,
     model: "gemini-2.5-flash",
   });
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
   const user = localStorage.getItem("user");
+  
   if (!user) {
-    Navigate("/auth-user");
+    navigate("/auth-user");
     return null;
   }
   useEffect(() => {
     // Initialize socket connection
-    const newSocket = io("https://veda-kx60.onrender.com", {
+    // Use environment variable or fallback to deployed URL
+    const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "https://veda-kx60.onrender.com";
+    
+    const newSocket = io(SOCKET_URL, {
       withCredentials: true,
+      transports: ['websocket', 'polling'], // Try websocket first, fallback to polling
     });
     setSocket(newSocket);
 

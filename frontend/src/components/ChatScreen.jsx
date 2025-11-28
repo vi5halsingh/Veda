@@ -3,8 +3,9 @@ import api from "../config/Api.jsx";
 import { toast } from "react-toastify";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { FiArrowUp, FiChevronDown, FiX } from "react-icons/fi";
+import { Navigate } from "react-router-dom";
 
 // A self-contained component for the settings panel, as per your plan.
 const SettingsPanel = ({ settings, setSettings, closePanel }) => {
@@ -31,15 +32,16 @@ const SettingsPanel = ({ settings, setSettings, closePanel }) => {
   return (
     <div
       ref={panelRef}
-      className="absolute top-14 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white border border-gray-200 rounded-lg shadow-xl z-20 p-4"
-      // Basic animation for appearing
-      style={{ animation: "fadeInDown 0.3s ease-out" }}
+      className="absolute top-12 left-1/4 -translate-x-1/2 w-[90%] max-w-md bg-[#1a1a1a] border border-[#404040] rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-[20px] z-20 p-4 animate-slide-down"
+      style={{
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.6), 0 0 1px rgba(59, 130, 246, 0.3)'
+      }}
     >
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">Model Settings</h3>
+        <h3 className="text-lg font-semibold text-[#f3f4f6]">Model Settings</h3>
         <button
           onClick={closePanel}
-          className="p-1 rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition-colors"
+          className="p-1 rounded-full text-[#9ca3af] hover:bg-[#252525] hover:text-[#f3f4f6] transition-colors"
         >
           <FiX size={20} />
         </button>
@@ -47,13 +49,13 @@ const SettingsPanel = ({ settings, setSettings, closePanel }) => {
       <div className="space-y-4">
         {/* Role (Persona) Selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-[#d1d5db] mb-1">
             Persona
           </label>
           <select
             value={settings.role}
             onChange={(e) => setSettings({ ...settings, role: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none bg-white"
+            className="w-full px-3 py-2 border border-[#404040] rounded-lg focus:ring-2 focus:ring-[#3b82f6] focus:border-[#3b82f6] focus:outline-none bg-[#0f0f0f] text-[#f3f4f6] hover:border-[#3b82f6] transition-colors"
           >
             <option value="default">Veda</option>
             <option value="funny">Funny</option>
@@ -65,9 +67,9 @@ const SettingsPanel = ({ settings, setSettings, closePanel }) => {
 
         {/* Temperature Control */}
         <div>
-          <label className="flex justify-between text-sm font-medium text-gray-700 mb-1">
+          <label className="flex justify-between text-sm font-medium text-[#d1d5db] mb-1">
             <span>Creativity (Temperature)</span>
-            <span className="font-bold text-gray-900">
+            <span className="font-bold text-[#f3f4f6]">
               {settings.temperature}
             </span>
           </label>
@@ -80,13 +82,16 @@ const SettingsPanel = ({ settings, setSettings, closePanel }) => {
             onChange={(e) =>
               setSettings({ ...settings, temperature: e.target.value })
             }
-            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
+            className="w-full h-2 bg-[#2a2a2a] rounded-lg appearance-none cursor-pointer slider-thumb"
+            style={{
+              background: `linear-gradient(to right, #3b82f6 0%, #6366f1 ${settings.temperature * 100}%, #2a2a2a ${settings.temperature * 100}%, #2a2a2a 100%)`
+            }}
           />
         </div>
 
         {/* Model Selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-[#d1d5db] mb-1">
             Model
           </label>
           <select
@@ -94,7 +99,7 @@ const SettingsPanel = ({ settings, setSettings, closePanel }) => {
             onChange={(e) =>
               setSettings({ ...settings, model: e.target.value })
             }
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:outline-none bg-white"
+            className="w-full px-3 py-2 border border-[#404040] rounded-lg focus:ring-2 focus:ring-[#3b82f6] focus:border-[#3b82f6] focus:outline-none bg-[#0f0f0f] text-[#f3f4f6] hover:border-[#3b82f6] transition-colors"
           >
             <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
             <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
@@ -116,6 +121,9 @@ export default function ChatScreen({
   const [isTyping, setIsTyping] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [isLimitEx, setIsLimitEx] = useState(false);
+  const [deferredPrompt , setDeferredPrompt] = useState(null);
+  const [showDownloadApp, setShowDownloadApp] = useState(false);
+ const messagesEndRef = useRef(null);
 
   useEffect(() => {
     if (chat) {
@@ -218,8 +226,7 @@ export default function ChatScreen({
     }
   };
 
-  const messagesEndRef = useRef(null);
-
+ 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -228,6 +235,27 @@ export default function ChatScreen({
     scrollToBottom();
   }, [messages, isTyping]);
 
+
+  useEffect(()=>{
+       const handleApp = (e) =>{
+      e.preventDefault();
+    setDeferredPrompt(e);
+    setShowDownloadApp(true);
+    }
+    window.addEventListener("beforeinstallprompt",handleApp)
+
+    return ()=>window.removeEventListener("beforeinstallprompt",handleApp)
+  },[])
+
+  const handleAppDownload =async ()=>{
+    if(!deferredPrompt) return ;
+    deferredPrompt.prompt()
+    const {outcome} = await deferredPrompt.userChoice
+    console.log(outcome)
+    setDeferredPrompt(null) 
+    showDownloadApp(false)
+  }
+  // if(!showDownloadApp) return null
   const markdownComponents = {
     pre: ({ node, ...props }) => <pre className="w-full" {...props} />,
     code({ node, inline, className, children, ...props }) {
@@ -235,15 +263,15 @@ export default function ChatScreen({
       return !inline && match ? (
         <div className="w-full">
           <SyntaxHighlighter
-            style={oneLight}
+            style={oneDark}
             language={match[1]}
             PreTag="div"
             customStyle={{
-              backgroundColor: "#ffff",
-              color: "#000000",
+              backgroundColor: "#1e1e1e",
+              color: "#e5e7eb",
               borderRadius: "0.5rem",
               padding: "1rem",
-              boxShadow: "0px 0px 10px #E5E7EB",
+              border: "1px solid #2a2a2a",
             }}
             {...props}
           >
@@ -252,7 +280,7 @@ export default function ChatScreen({
         </div>
       ) : (
         <code
-          className="bg-gray-200 text-black rounded px-1.5 py-1 font-mono text-sm"
+          className="bg-[#1e1e1e] text-[#e5e7eb] rounded px-1.5 py-1 font-mono text-sm border border-[#404040]"
           {...props}
         >
           {children}
@@ -262,11 +290,11 @@ export default function ChatScreen({
   };
 
   return (
-    <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
-      <header className="h-12 border-b border-gray-200 flex items-center justify-center px-4 bg-white shadow-sm flex-shrink-0">
+    <div className="flex-1 flex flex-col h-screen overflow-hidden relative bg-[#0a0a0a]">
+      <header className="h-12 border-b border-[#404040] flex items-center justify-between px-4 bg-[#0d0d0d] shadow-sm flex-shrink-0">
         <button
           onClick={() => setShowSettings(!showSettings)}
-          className="header-settings-button flex items-center gap-2 text-lg font-semibold text-gray-800 hover:text-black transition p-2 rounded-md"
+          className="header-settings-button flex items-center gap-2 text-lg font-semibold text-[#f3f4f6] hover:text-[#3b82f6] transition-all duration-200 p-2 rounded-md hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]"
         >
           Veda
           <FiChevronDown
@@ -274,6 +302,12 @@ export default function ChatScreen({
               showSettings ? "rotate-180" : ""
             }`}
           />
+        </button>
+        <button 
+          className="cursor-pointer border border-[#3b82f6] header-settings-button flex items-center gap-2 text-sm font-semibold text-[#3b82f6] hover:bg-[#3b82f6] hover:text-white transition-all duration-200 px-3 py-1.5 rounded-lg hover:shadow-[0_0_20px_rgba(59,130,246,0.4)]" 
+          onClick={()=>handleAppDownload}
+        >
+          Get app
         </button>
       </header>
 
@@ -288,7 +322,7 @@ export default function ChatScreen({
       {chat ? (
         <>
           {messages.length != 0 ? (
-            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
+            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#0a0a0a]">
               {messages.map((msg, i) => (
                 <div
                   key={i}
@@ -297,10 +331,10 @@ export default function ChatScreen({
                   }`}
                 >
                   <div
-                    className={`font-inter prose prose-sm max-w-full md:max-w-[70%] px-4 py-3 rounded-lg shadow-sm break-words ${
+                    className={`font-inter prose prose-sm max-w-full md:max-w-[70%] px-4 py-3 rounded-2xl shadow-sm break-words animate-slide-up ${
                       msg.role === "user"
-                        ? "bg-gray-200 text-black rounded-br-none"
-                        : "bg-white text-gray-800 rounded-bl-none"
+                        ? "bg-gradient-to-r from-[#1e3a8a] to-[#3730a3] text-[#f3f4f6] rounded-br-md shadow-[0_4px_12px_rgba(30,58,138,0.4)]"
+                        : "bg-[#1a1a1a] text-[#e5e7eb] rounded-bl-md border border-[#404040] shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
                     }`}
                   >
                     <ReactMarkdown components={markdownComponents}>
@@ -312,11 +346,11 @@ export default function ChatScreen({
 
               {isTyping && (
                 <div className="flex justify-start">
-                  <div className="bg-white text-gray-800 rounded-lg px-4 py-3 shadow-sm rounded-bl-none">
+                  <div className="bg-[#1a1a1a] text-[#e5e7eb] rounded-2xl px-4 py-3 shadow-sm rounded-bl-md border border-[#404040] shadow-[0_2px_8px_rgba(0,0,0,0.3)]">
                     <div className="flex items-center justify-center space-x-2">
-                      <div className="w-2 h-2 rounded-full bg-gray-400 animate-pulse"></div>
-                      <div className="w-2 h-2 rounded-full bg-gray-400 animate-pulse [animation-delay:0.2s]"></div>
-                      <div className="w-2 h-2 rounded-full bg-gray-400 animate-pulse [animation-delay:0.4s]"></div>
+                      <div className="w-2 h-2 rounded-full bg-[#6b7280] animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.4)]"></div>
+                      <div className="w-2 h-2 rounded-full bg-[#6b7280] animate-pulse [animation-delay:0.2s] shadow-[0_0_8px_rgba(59,130,246,0.4)]"></div>
+                      <div className="w-2 h-2 rounded-full bg-[#6b7280] animate-pulse [animation-delay:0.4s] shadow-[0_0_8px_rgba(59,130,246,0.4)]"></div>
                     </div>
                   </div>
                 </div>
@@ -325,7 +359,7 @@ export default function ChatScreen({
             </div>
           ) : null}
           {isLimitEx ? (
-            <div className="max-w-[80%] mx-auto my-auto p-6 rounded-2xl bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg flex flex-col items-center gap-4">
+            <div className="max-w-[80%] mx-auto my-auto p-6 rounded-2xl bg-gradient-to-r from-[#ef4444] to-[#f97316] text-white shadow-[0_10px_40px_rgba(239,68,68,0.4)] flex flex-col items-center gap-4 animate-scale-in border-2 border-[#ef4444] animate-pulse-glow">
               <h2 className="text-lg font-bold">⚠️ Token Limit Exceeded</h2>
               <p className="text-sm text-center">
                 You’ve reached your token usage limit. Please upgrade your plan
@@ -340,11 +374,11 @@ export default function ChatScreen({
                     pauseOnHover: true,
                     draggable: true,
                     progress: undefined,
-                    theme: "light",
+                    theme: "dark",
                     closeOnClick: true,
                   });
                 }}
-                className="px-5 py-2 rounded-full bg-white text-red-600 font-semibold hover:bg-gray-100 transition-colors"
+                className="px-5 py-2 rounded-full bg-white text-[#ef4444] font-semibold hover:scale-105 hover:shadow-lg transition-all duration-200"
               >
                 Upgrade Now
               </button>
@@ -352,7 +386,7 @@ export default function ChatScreen({
           ) : (
             <form
               onSubmit={handleSend}
-              className={`border border-gray-300 py-2 px-2 flex items-center gap-3 bg-white flex-shrink-0 rounded-full w-full max-w-[80%] mx-auto ${
+              className={`border border-[#404040] py-2 px-2 flex items-center gap-3 bg-[#1a1a1a] flex-shrink-0 rounded-3xl w-full max-w-[80%] mx-auto focus-within:border-[#3b82f6] focus-within:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all duration-200 ${
                 messages.length != 0 ? "my-1" : "my-auto"
               }`}
             >
@@ -361,14 +395,14 @@ export default function ChatScreen({
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyPress}
                 placeholder="Ask anything..."
-                className="flex-1 px-4 py-2 outline-none font-medium text-sm w-full min-h-[40px] max-h-[120px] resize-y bg-transparent"
+                className="flex-1 px-4 py-2 outline-none font-medium text-sm w-full min-h-[40px] max-h-[120px] resize-y bg-transparent text-[#f3f4f6] placeholder:text-[#6b7280]"
                 rows={1}
                 disabled={isTyping ? true : false}
               />
               <button
                 type="submit"
                 disabled={!input.trim()}
-                className="bg-black text-white p-3 rounded-full transition-colors disabled:bg-gray-200 disabled:text-gray-500"
+                className="bg-gradient-to-r from-[#3b82f6] to-[#6366f1] text-white p-3 rounded-full transition-all duration-200 disabled:bg-[#2a2a2a] disabled:text-[#6b7280] hover:scale-105 active:scale-95 hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]"
               >
                 <FiArrowUp />
               </button>
@@ -376,36 +410,24 @@ export default function ChatScreen({
           )}
 
           {messages.length != 0 ? (
-            <div className="text-sm text-gray-500 text-center font-semibold py-2">
-              Veda can make mistake.Please check carefully !
+            <div className="text-sm text-[#6b7280] text-center font-semibold py-2">
+              Veda can make mistake. Please check carefully!
             </div>
           ) : null}
         </>
       ) : (
-        <div className="h-full flex items-center justify-center text-gray-400 text-sm">
-          👋 Welcome! Start a new chat or select an existing one to begin your
-          conversation with Veda-AI.
+        <div className="h-full flex flex-col items-center justify-center text-[#9ca3af] text-sm bg-gradient-radial from-[#0f0f0f] to-[#0a0a0a] p-8">
+          <img src="/logo.svg" alt="Veda Logo" className="w-32 h-32 mb-6 animate-float" style={{filter: 'drop-shadow(0 0 30px rgba(59, 130, 246, 0.4))'}} />
+          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-[#3b82f6] to-[#8b5cf6] bg-clip-text text-transparent animate-gradient">
+            Welcome to Veda AI
+          </h1>
+          <p className="text-[#d1d5db] text-center max-w-md mb-8">
+            👋 Start a new chat or select an existing one to begin your intelligent conversation with Veda-AI.
+          </p>
         </div>
       )}
     </div>
   );
 }
 
-// Simple keyframe animation for the panel
-const styles = document.createElement("style");
-styles.innerHTML = `
-  @keyframes fadeInDown {
-    from {
-      opacity: 0;
-      transform: translate(0, -50%);
-    }
-    to {
-      opacity: 1;
-      transform: translate(0, 0);
-    }
-  }
-  .animate-fade-in-down {
-    animation: fadeInDown 0.5s ease;
-  }
-`;
-document.head.appendChild(styles);
+
