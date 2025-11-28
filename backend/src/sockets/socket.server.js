@@ -38,7 +38,7 @@ async function initSocketServer(httpServer) {
 
   io.use(async (socket, next) => {
     const cookies = cookie.parse(socket.handshake.headers?.cookie || "");
-    console.log("token from socket ",cookie.token)
+    // console.log("token from socket ",cookie.token)
 
     if (!cookies.token) {
       return next(new Error("Unauthorized: No token provided"));
@@ -167,15 +167,19 @@ async function initSocketServer(httpServer) {
             text: response,
           },
         });
+        // Decrement token limit and save the user
+        user.tokenLimit -= 1;
+        await user.save();
+
         socket.emit("ai-response", {
           content: response,
           chat: messagePayload.chat,
         });
 
-        // Decrement token limit and save the user
-        user.tokenLimit -= 1;
-
-        await user.save();
+        // Send updated token count to frontend
+        socket.emit("token-update", {
+          tokenLimit: user.tokenLimit,
+        });
       } catch (error) {
         socket.emit("ai-error", {
           message: "Failed to get a response from Veda-AI.",

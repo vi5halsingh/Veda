@@ -46,6 +46,7 @@ const Chat = () => {
         onSelectChat={handleSelectChat}
         selectedChatId={selectedChat?.id}
         user={user}
+        socket={socket}
       />
       <ChatScreen
         chat={selectedChat}

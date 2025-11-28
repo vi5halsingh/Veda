@@ -17,7 +17,7 @@ import api from "../config/Api";
 import { toast } from "react-toastify";
 import logo from "/logo.svg";
 
-export default function Sidebar({ onSelectChat, selectedChatId }) {
+export default function Sidebar({ onSelectChat, selectedChatId, socket }) {
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,7 +28,7 @@ export default function Sidebar({ onSelectChat, selectedChatId }) {
   const [newChatTitle, setNewChatTitle] = useState("");
   const [showSettingsCard, setShowSettingsCard] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [token, setToken] = useState(0);
+  const [tokenCount, setTokenCount] = useState(0);
   const Navigate = useNavigate();
 
   // refs for click-outside
@@ -40,7 +40,37 @@ export default function Sidebar({ onSelectChat, selectedChatId }) {
     fetchChats();
   }, []);
 
+  // Listen for token updates from socket
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleTokenUpdate = (data) => {
+      setTokenCount(data.tokenLimit);
+      
+      // Also update localStorage
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const userObj = JSON.parse(storedUser);
+        userObj.token = data.tokenLimit;
+        localStorage.setItem("user", JSON.stringify(userObj));
+      }
+    };
+
+    socket.on("token-update", handleTokenUpdate);
+
+    return () => {
+      socket.off("token-update", handleTokenUpdate);
+    };
+  }, [socket]);
+
   const user = JSON.parse(localStorage.getItem("user"));
+  
+  // Initialize token count from user data
+  useEffect(() => {
+    if (user?.token) {
+      setTokenCount(user.token);
+    }
+  }, [user?.token]);
   const fetchChats = async () => {
     try {
       const response = await api.get("/chat", {
@@ -355,7 +385,7 @@ export default function Sidebar({ onSelectChat, selectedChatId }) {
               {user?.fullname?.firstname || "User"}
             </div>
             <div className="px-3 py-2 text-sm text-[#d1d5db] border-b border-[#404040]">
-              Token : {user?.token || "10"}
+              Token : {tokenCount || user?.token || "10"}
             </div>
             {/* keep only logout action as per existing functionality */}
             <button
