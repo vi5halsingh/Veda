@@ -8,12 +8,13 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "../public")));
 connectDB();
-app.use(
-  cors({
-    origin: ["http://localhost:5173", "https://veda-kx60.onrender.com"],
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: ["http://localhost:5173", "https://veda-kx60.onrender.com", "http://localhost:4173"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+  exposedHeaders: ["set-cookie"]
+}));
 const authRoutes = require("./routes/auth.routes");
 const chatRoutes = require("./routes/chat.routes");
 

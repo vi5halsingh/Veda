@@ -111,6 +111,7 @@ async function generateResponse(content, options = {}) {
   const temperature = options.temperature || 0.7;
   const systemInstruction = getSystemPrompt(options.role);
 
+ 
   const response = await ai.models.generateContent({
     model: model,
     contents: content,

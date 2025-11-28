@@ -6,7 +6,7 @@ import AuthImages from "../components/AuthImages";
 const AuthPage = () => {
   const [authType, setauthType] = useState("login");
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex bg-[#0a0a0a]">
       <AuthImages />
       {authType === "signup" ? (
         <Signup type={authType} setType={setauthType} />

@@ -43,10 +43,16 @@ export default function Sidebar({ onSelectChat, selectedChatId }) {
   const user = JSON.parse(localStorage.getItem("user"));
   const fetchChats = async () => {
     try {
-      const response = await api.get("/chat");
+      const response = await api.get("/chat", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true
+      });
       setChats(response.data.chats);
       setError(null);
     } catch (error) {
+      console.log(error)
       toast.error("Could not load chats", {
         position: "bottom-right",
         autoClose: 2000,
@@ -180,11 +186,11 @@ export default function Sidebar({ onSelectChat, selectedChatId }) {
 
   if (loading) {
     return (
-      <div className="h-screen w-64 bg-[#fff] border-r border-gray-800 p-4 flex flex-col">
+      <div className="h-screen w-64 bg-[#0f0f0f] border-r border-[#404040] p-4 flex flex-col">
         <div className="animate-pulse space-y-4">
-          <div className="h-10 bg-gray-200 rounded"></div>
-          <div className="h-8 bg-gray-200 rounded w-3/4"></div>
-          <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+          <div className="h-10 bg-[#1a1a1a] rounded animate-shimmer"></div>
+          <div className="h-8 bg-[#1a1a1a] rounded w-3/4 animate-shimmer"></div>
+          <div className="h-8 bg-[#1a1a1a] rounded w-1/2 animate-shimmer"></div>
         </div>
       </div>
     );
@@ -192,21 +198,20 @@ export default function Sidebar({ onSelectChat, selectedChatId }) {
 
   return (
     <div
-      className={`border-r border-gray-200 relative h-screen bg-[#fff] text-black flex flex-col transition-all duration-200 ${
-        isMinimized ? "w-16" : "w-72"
-      }`}
+      className={`border-r border-[#404040] relative h-screen bg-[#0f0f0f] text-[#f3f4f6] flex flex-col transition-all duration-200 ${isMinimized ? "w-16" : "w-72"
+        }`}
     >
       {/* Header */}
-      <div className="p-2 flex items-center justify-between border-b border-gray-200">
-        {!isMinimized && <img src={logo} alt="logo" className="w-7 h-7" />}
+      <div className="p-2 flex items-center justify-between border-b border-[#404040] bg-[#0a0a0a]">
+        {!isMinimized && <img src={logo} alt="logo" className="w-7 h-7 animate-float" />}
         <button
           onClick={() => setIsMinimized(!isMinimized)}
-          className="p-2 rounded hover:bg-gray-200 transition cursor-ew-resize"
+          className="p-2 rounded hover:bg-[#1e1e1e] transition-all duration-200 cursor-ew-resize hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]"
         >
           {isMinimized ? (
-            <HiMiniArrowRightEndOnRectangle />
+            <HiMiniArrowRightEndOnRectangle className="text-[#9ca3af]" />
           ) : (
-            <HiMiniArrowLeftEndOnRectangle />
+            <HiMiniArrowLeftEndOnRectangle className="text-[#9ca3af]" />
           )}
         </button>
       </div>
@@ -216,7 +221,7 @@ export default function Sidebar({ onSelectChat, selectedChatId }) {
         <button
           onClick={createChat}
           disabled={isCreating}
-          className="w-full bg-[#ffff] hover:bg-gray-200 text-black py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition disabled:opacity-50 cursor-pointer"
+          className="w-full bg-gradient-to-r from-[#3b82f6] to-[#6366f1] hover:scale-[1.02] active:scale-[0.98] text-white py-2 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-50 cursor-pointer shadow-[0_4px_20px_rgba(59,130,246,0.3)] hover:shadow-[0_6px_30px_rgba(59,130,246,0.5)]"
         >
           <FiPlus className={isCreating ? "animate-spin" : ""} />
           {!isMinimized && "New Chat"}
@@ -225,7 +230,7 @@ export default function Sidebar({ onSelectChat, selectedChatId }) {
 
       {/* Error */}
       {error && !isMinimized && (
-        <div className="mx-3 p-2 bg-red-900/20 border border-red-500/40 rounded-lg text-red-300 text-sm">
+        <div className="mx-3 p-2 bg-[rgba(239,68,68,0.1)] border border-[#ef4444] rounded-lg text-[#fca5a5] text-sm">
           {error}
         </div>
       )}
@@ -238,11 +243,12 @@ export default function Sidebar({ onSelectChat, selectedChatId }) {
             <div
               key={i}
               onClick={() => onSelectChat?.(chat)}
-              className={`group relative w-full px-3 py-2 rounded-md flex items-center gap-3 cursor-pointer transition-colors duration-150 ${
-                isActive ? "bg-[#ffff]" : "hover:bg-gray-200"
-              }`}
+              className={`group relative w-full px-3 py-2 rounded-lg flex items-center gap-3 cursor-pointer transition-all duration-150 ${isActive
+                ? "bg-[#1a1a1a] border-l-[3px] border-[#3b82f6]"
+                : "hover:bg-[#1e1e1e] border-l-[3px] border-transparent"
+                }`}
             >
-              <FiMessageSquare className="flex-shrink-0" />
+              <FiMessageSquare className="flex-shrink-0 text-[#9ca3af]" />
               {!isMinimized && (
                 <div className="flex-1 min-w-0 flex items-center">
                   {/* title / rename */}
@@ -255,13 +261,13 @@ export default function Sidebar({ onSelectChat, selectedChatId }) {
                         onKeyDown={(e) =>
                           e.key === "Enter" && renameChat(chat.id)
                         }
-                        className="w-full px-2 py-1 rounded bg-[#fff] text-black outline-none"
+                        className="w-full px-2 py-1 rounded bg-[#0f0f0f] text-[#f3f4f6] border border-[#404040] outline-none focus:border-[#3b82f6] focus:ring-1 focus:ring-[#3b82f6]"
                       />
                     ) : (
                       <>
-                        <p className="truncate">{chat.title}</p>
+                        <p className="truncate text-[#f3f4f6]">{chat.title}</p>
                         {chat.lastactivity && (
-                          <p className="text-xs text-gray-400 truncate">
+                          <p className="text-xs text-[#6b7280] truncate">
                             {formatLastActivity(chat.lastactivity)}
                           </p>
                         )}
@@ -271,18 +277,17 @@ export default function Sidebar({ onSelectChat, selectedChatId }) {
 
                   {/* hover-only actions (three dots) */}
                   <div
-                    className={`ml-2 -mr-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150 ${
-                      menuOpenId === chat.id || editingChatId === chat.id
-                        ? "opacity-100"
-                        : ""
-                    }`}
+                    className={`ml-2 -mr-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150 ${menuOpenId === chat.id || editingChatId === chat.id
+                      ? "opacity-100"
+                      : ""
+                      }`}
                   >
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         setMenuOpenId(menuOpenId === chat.id ? null : chat.id);
                       }}
-                      className="p-1.5 rounded hover:bg-[#e5e7eb] focus-visible:outline-none"
+                      className="p-1.5 rounded hover:bg-[#252525] focus-visible:outline-none text-[#9ca3af] hover:text-[#f3f4f6]"
                       aria-label="More"
                       title="More"
                     >
@@ -294,7 +299,7 @@ export default function Sidebar({ onSelectChat, selectedChatId }) {
                   {menuOpenId === chat.id && (
                     <div
                       ref={menuRef}
-                      className="absolute right-0 top-10 z-20 rounded-md bg-[#fff] border border-[#e5e7eb] shadow-xl overflow-hidden"
+                      className="absolute right-0 top-10 z-20 rounded-md bg-[#1a1a1a] border border-[#404040] shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden backdrop-blur-[10px] animate-slide-down"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <button
@@ -303,7 +308,7 @@ export default function Sidebar({ onSelectChat, selectedChatId }) {
                           setNewChatTitle(chat.title);
                           setMenuOpenId(null);
                         }}
-                        className="w-full px-2 py-2 text-left hover:bg-[#e5e7eb] cursor-pointer"
+                        className="w-full px-4 py-2 text-left hover:bg-[#252525] cursor-pointer text-[#f3f4f6] transition-colors duration-150"
                       >
                         Rename
                       </button>
@@ -312,7 +317,7 @@ export default function Sidebar({ onSelectChat, selectedChatId }) {
                           deleteChat(chat.id);
                           setMenuOpenId(null);
                         }}
-                        className="w-full px-2 py-2 text-left hover:bg-[#e5e7eb] cursor-pointer"
+                        className="w-full px-4 py-2 text-left hover:bg-[#252525] cursor-pointer text-[#f3f4f6] transition-colors duration-150"
                       >
                         Delete
                       </button>
@@ -326,13 +331,13 @@ export default function Sidebar({ onSelectChat, selectedChatId }) {
       </div>
 
       {/* Bottom: Settings/Profile */}
-      <div className="p-3 border-t border-gray-200">
+      <div className="p-3 border-t border-[#404040]">
         <button
           ref={settingsBtnRef}
           onClick={() => setShowSettingsCard((s) => !s)}
-          className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-[#e5e7eb] transition cursor-pointer"
+          className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-[#1e1e1e] transition-all duration-200 cursor-pointer text-[#f3f4f6]"
         >
-          <FiSettings />
+          <FiSettings className="text-[#9ca3af]" />
           {!isMinimized && <span>{user?.fullname?.firstname || "User"}</span>}
         </button>
       </div>
@@ -340,19 +345,22 @@ export default function Sidebar({ onSelectChat, selectedChatId }) {
       {showSettingsCard && !isMinimized && (
         <div
           ref={settingsCardRef}
-          className="absolute bottom-16 left-3 z-30 w-64 rounded-xl border border-gray-200 bg-[#fff] shadow-2xl "
+          className="absolute bottom-16 left-3 z-30 w-64 rounded-xl border border-[#404040] bg-[#1a1a1a] shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-[20px] animate-scale-in"
+          style={{
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.6), 0 0 1px rgba(59, 130, 246, 0.3)'
+          }}
         >
           <div className="p-2">
-            <div className="px-3 py-2 text-sm text-black border-b border-gray-200">
+            <div className="px-3 py-2 text-sm text-[#f3f4f6] border-b border-[#404040]">
               {user?.fullname?.firstname || "User"}
             </div>
-            <div className="px-3 py-2 text-sm text-black border-b border-gray-200">
+            <div className="px-3 py-2 text-sm text-[#d1d5db] border-b border-[#404040]">
               Token : {user?.token || "10"}
             </div>
             {/* keep only logout action as per existing functionality */}
             <button
               onClick={handleLogout}
-              className="mt-1 w-full flex items-center gap-2 px-3 py-2 rounded hover:bg-[#e5e7eb] text-left text-red-500 cursor-pointer"
+              className="mt-1 w-full flex items-center gap-2 px-3 py-2 rounded hover:bg-[#252525] text-left text-[#ef4444] cursor-pointer transition-colors duration-150"
             >
               <FiLogOut />
               <span>Logout</span>
