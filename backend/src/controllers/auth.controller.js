@@ -43,7 +43,7 @@ async function userRegister(req, res) {
 
 async function loginUser(req, res) {
   const { email, password } = req.body;
-  console.log("data from login", email , password)
+  // console.log("data from login", email , password)
   const user = await userModel.findOne({ email });
 
   if (!user) {
