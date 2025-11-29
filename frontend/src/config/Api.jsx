@@ -12,4 +12,18 @@ const api = axios.create({
   credentials: 'include'
 });
 
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("user");
+      localStorage.removeItem("lastLoginTime");
+      window.location.href = "/auth";
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;

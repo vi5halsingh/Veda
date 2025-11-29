@@ -22,7 +22,9 @@ async function userRegister(req, res) {
     },
     password: hashPW,
   });
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "24h",
+  });
 
   // Set cookie - simple settings for local development
   res.cookie("token", token, {
@@ -55,7 +57,9 @@ async function loginUser(req, res) {
     return res.status(401).json({ msg: "Invalid email or password" });
   }
 
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "24h",
+  });
   // console.log("token from login", token)
   // Set cookie - simple settings for local development
   res.cookie("token", token, {
