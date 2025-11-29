@@ -57,7 +57,7 @@ async function initSocketServer(httpServer) {
   });
 
   io.on("connection", (socket) => {
-    console.log("connected to socket")
+    // console.log("connected to socket")
     socket.on("ai-message", async (messagePayload) => {
       // console.log(messagePayload)
 

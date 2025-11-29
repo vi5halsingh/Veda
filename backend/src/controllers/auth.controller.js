@@ -23,7 +23,7 @@ async function userRegister(req, res) {
     password: hashPW,
   });
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-  
+
   // Set cookie - simple settings for local development
   res.cookie("token", token, {
     httpOnly: true,
@@ -56,7 +56,7 @@ async function loginUser(req, res) {
   }
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-  console.log("token from login", token)
+  // console.log("token from login", token)
   // Set cookie - simple settings for local development
   res.cookie("token", token, {
     httpOnly: true,
