@@ -10,11 +10,9 @@ const { model } = require("mongoose");
 async function initSocketServer(httpServer) {
   // Socket.IO CORS configuration - should match your frontend URLs
   const allowedOrigins = [
-    "http://localhost:5173",      // Local Vite dev
-    "http://localhost:4173",      // Local Vite preview
-    // Add your deployed frontend URL here, for example:
-    // "https://your-frontend-app.vercel.app",
-    // "https://your-frontend-app.netlify.app",
+    "https://veda-kx60.onrender.com",
+    "http://localhost:5173",
+
   ];
 
   const io = new Server(httpServer, {
