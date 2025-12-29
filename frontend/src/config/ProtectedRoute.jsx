@@ -1,8 +1,12 @@
 import { Navigate } from "react-router-dom";
-import Cookies from "js-cookie";
+import { useAuth } from "../context/AuthContext";
 
 export default function ProtectedRoute({ children }) {
-  const token = JSON.parse(localStorage.getItem("user"));
-  // console.log(token);
-  return token ? children : <Navigate to="/auth-user" replace />;
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div>Loading...</div>; // Or a better spinner
+  }
+
+  return user ? children : <Navigate to="/auth-user" replace />;
 }
