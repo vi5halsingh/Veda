@@ -20,7 +20,7 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       localStorage.removeItem("user");
       localStorage.removeItem("lastLoginTime");
-      window.location.href = "/auth";
+      window.location.href = "/auth-user";
     }
     return Promise.reject(error);
   }

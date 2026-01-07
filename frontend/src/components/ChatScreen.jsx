@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import api from "../config/Api.jsx";
 import { toast } from "react-toastify";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { FiArrowUp, FiChevronDown, FiX } from "react-icons/fi";
-import { Navigate } from "react-router-dom";
+import { FiArrowUp, FiChevronDown, FiX, FiClock, FiMenu } from "react-icons/fi";
+import { useCurrentTime } from "../hooks/useMcp";
 
 // A self-contained component for the settings panel, as per your plan.
 const SettingsPanel = ({ settings, setSettings, closePanel }) => {
@@ -31,8 +31,9 @@ const SettingsPanel = ({ settings, setSettings, closePanel }) => {
 
   return (
     <div
+      wrapper="settings-panel"
       ref={panelRef}
-      className="absolute top-12 left-1/4 -translate-x-1/2 w-[90%] max-w-md bg-[#1a1a1a] border border-[#404040] rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-[20px] z-20 p-4 animate-slide-down"
+      className="absolute top-14 left-1/2 -translate-x-1/2 w-[95%] sm:max-w-md bg-[#1a1a1a] border border-[#404040] rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-[20px] z-50 p-4 animate-slide-down"
       style={{
         boxShadow: '0 20px 60px rgba(0, 0, 0, 0.6), 0 0 1px rgba(59, 130, 246, 0.3)'
       }}
@@ -115,15 +116,19 @@ export default function ChatScreen({
   socket,
   modelSettings,
   setModelSettings,
+  toggleSidebar,
 }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [isLimitEx, setIsLimitEx] = useState(false);
-  const [deferredPrompt , setDeferredPrompt] = useState(null);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showDownloadApp, setShowDownloadApp] = useState(false);
- const messagesEndRef = useRef(null);
+  const messagesEndRef = useRef(null);
+
+  // MCP: Current time hook for contextual awareness
+  const { timeData } = useCurrentTime(60000);
 
   useEffect(() => {
     if (chat) {
@@ -156,7 +161,7 @@ export default function ChatScreen({
     if (!socket) return;
     const handleTypingStart = () => setIsTyping(true);
     const tokenLimitExceed = () => {
- 
+
       setIsTyping(false);
       toast.error("Token limit exceeded !", {
         position: "bottom-right",
@@ -226,7 +231,7 @@ export default function ChatScreen({
     }
   };
 
- 
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -236,23 +241,23 @@ export default function ChatScreen({
   }, [messages, isTyping]);
 
 
-  useEffect(()=>{
-       const handleApp = (e) =>{
+  useEffect(() => {
+    const handleApp = (e) => {
       e.preventDefault();
-    setDeferredPrompt(e);
-    setShowDownloadApp(true);
+      setDeferredPrompt(e);
+      setShowDownloadApp(true);
     }
-    window.addEventListener("beforeinstallprompt",handleApp)
+    window.addEventListener("beforeinstallprompt", handleApp)
 
-    return ()=>window.removeEventListener("beforeinstallprompt",handleApp)
-  },[])
+    return () => window.removeEventListener("beforeinstallprompt", handleApp)
+  }, [])
 
-  const handleAppDownload =async ()=>{
-    if(!deferredPrompt) return ;
+  const handleAppDownload = async () => {
+    if (!deferredPrompt) return;
     deferredPrompt.prompt()
-    const {outcome} = await deferredPrompt.userChoice
+    const { outcome } = await deferredPrompt.userChoice
     // console.log(outcome)
-    setDeferredPrompt(null) 
+    setDeferredPrompt(null)
     showDownloadApp(false)
   }
   // if(!showDownloadApp) return null
@@ -292,23 +297,38 @@ export default function ChatScreen({
   return (
     <div className="flex-1 flex flex-col h-screen overflow-hidden relative bg-[#0a0a0a]">
       <header className="h-12 border-b border-[#404040] flex items-center justify-between px-4 bg-[#0d0d0d] shadow-sm flex-shrink-0">
-        <button
-          onClick={() => setShowSettings(!showSettings)}
-          className="header-settings-button flex items-center gap-2 text-lg font-semibold text-[#f3f4f6] hover:text-[#3b82f6] transition-all duration-200 p-2 rounded-md hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]"
-        >
-          Veda
-          <FiChevronDown
-            className={`transition-transform duration-300 ${
-              showSettings ? "rotate-180" : ""
-            }`}
-          />
-        </button>
-        <button 
-          className="cursor-pointer border border-[#3b82f6] header-settings-button flex items-center gap-2 text-sm font-semibold text-[#3b82f6] hover:bg-[#3b82f6] hover:text-white transition-all duration-200 px-3 py-1.5 rounded-lg hover:shadow-[0_0_20px_rgba(59,130,246,0.4)]" 
-          onClick={()=>handleAppDownload}
-        >
-          Get app
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={toggleSidebar}
+            className="sm:hidden p-2 rounded-md text-[#9ca3af] hover:bg-[#1e1e1e] transition-colors"
+          >
+            <FiMenu size={20} />
+          </button>
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="header-settings-button flex items-center gap-2 text-lg font-semibold text-[#f3f4f6] hover:text-[#3b82f6] transition-all duration-200 p-2 rounded-md hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+          >
+            Veda
+            <FiChevronDown
+              className={`transition-transform duration-300 ${showSettings ? "rotate-180" : ""
+                }`}
+            />
+          </button>
+        </div>
+        <div className="flex items-center gap-4">
+          {timeData && (
+            <div className="hidden sm:flex items-center gap-2 text-xs text-[#9ca3af]">
+              <FiClock className="text-[#3b82f6]" />
+              <span>{timeData.formattedTime}</span>
+            </div>
+          )}
+          <button
+            className="cursor-pointer border border-[#3b82f6] header-settings-button flex items-center gap-2 text-sm font-semibold text-[#3b82f6] hover:bg-[#3b82f6] hover:text-white transition-all duration-200 px-3 py-1.5 rounded-lg hover:shadow-[0_0_20px_rgba(59,130,246,0.4)]"
+            onClick={handleAppDownload}
+          >
+            Get app
+          </button>
+        </div>
       </header>
 
       {showSettings && (
@@ -326,16 +346,14 @@ export default function ChatScreen({
               {messages.map((msg, i) => (
                 <div
                   key={i}
-                  className={`flex ${
-                    msg.role === "user" ? "justify-end" : "justify-start"
-                  }`}
+                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"
+                    }`}
                 >
                   <div
-                    className={`font-inter prose prose-sm max-w-full md:max-w-[70%] px-4 py-3 rounded-2xl shadow-sm break-words animate-slide-up ${
-                      msg.role === "user"
-                        ? "bg-gradient-to-r from-[#1e3a8a] to-[#3730a3] text-[#f3f4f6] rounded-br-md shadow-[0_4px_12px_rgba(30,58,138,0.4)]"
-                        : "bg-[#1a1a1a] text-[#e5e7eb] rounded-bl-md border border-[#404040] shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
-                    }`}
+                    className={`font-inter prose prose-sm max-w-full md:max-w-[70%] px-4 py-3 rounded-2xl shadow-sm break-words animate-slide-up ${msg.role === "user"
+                      ? "bg-gradient-to-r from-[#1e3a8a] to-[#3730a3] text-[#f3f4f6] rounded-br-md shadow-[0_4px_12px_rgba(30,58,138,0.4)]"
+                      : "bg-[#1a1a1a] text-[#e5e7eb] rounded-bl-md border border-[#404040] shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
+                      }`}
                   >
                     <ReactMarkdown components={markdownComponents}>
                       {msg.content}
@@ -386,9 +404,8 @@ export default function ChatScreen({
           ) : (
             <form
               onSubmit={handleSend}
-              className={`border border-[#404040] py-2 px-2 flex items-center gap-3 bg-[#1a1a1a] flex-shrink-0 rounded-3xl w-full max-w-[80%] mx-auto focus-within:border-[#3b82f6] focus-within:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all duration-200 ${
-                messages.length != 0 ? "my-1" : "my-auto"
-              }`}
+              className={`border border-[#404040] py-2 px-2 flex items-center gap-3 bg-[#1a1a1a] flex-shrink-0 rounded-3xl w-full max-w-[80%] mx-auto focus-within:border-[#3b82f6] focus-within:shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all duration-200 ${messages.length != 0 ? "my-1" : "my-auto"
+                }`}
             >
               <textarea
                 value={input}
@@ -417,7 +434,7 @@ export default function ChatScreen({
         </>
       ) : (
         <div className="h-full flex flex-col items-center justify-center text-[#9ca3af] text-sm bg-gradient-radial from-[#0f0f0f] to-[#0a0a0a] p-8">
-          <img src="/logo.svg" alt="Veda Logo" className="w-32 h-32 mb-6 animate-float" style={{filter: 'drop-shadow(0 0 30px rgba(59, 130, 246, 0.4))'}} />
+          <img src="/logo.svg" alt="Veda Logo" className="w-32 h-32 mb-6 animate-float" style={{ filter: 'drop-shadow(0 0 30px rgba(59, 130, 246, 0.4))' }} />
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-[#3b82f6] to-[#8b5cf6] bg-clip-text text-transparent animate-gradient">
             Welcome to Veda AI
           </h1>

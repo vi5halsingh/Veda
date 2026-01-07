@@ -12,9 +12,10 @@ const Chat = () => {
     temperature: 0.7,
     model: "gemini-2.5-flash",
   });
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const user = localStorage.getItem("user");
-  
+
   if (!user) {
     navigate("/auth-user");
     return null;
@@ -23,7 +24,7 @@ const Chat = () => {
     // Initialize socket connection
     // Use environment variable or fallback to deployed URL
     const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "https://veda-kx60.onrender.com";
-    
+
     const newSocket = io(SOCKET_URL, {
       withCredentials: true,
       transports: ['websocket', 'polling'], // Try websocket first, fallback to polling
@@ -41,18 +42,21 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex">
+    <div className="flex h-screen overflow-hidden">
       <Sidebar
         onSelectChat={handleSelectChat}
         selectedChatId={selectedChat?.id}
         user={user}
         socket={socket}
+        isOpen={isSidebarOpen}
+        setIsOpen={setIsSidebarOpen}
       />
       <ChatScreen
         chat={selectedChat}
         socket={socket}
         modelSettings={modelSettings}
         setModelSettings={setModelSettings}
+        toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
       />
     </div>
   );

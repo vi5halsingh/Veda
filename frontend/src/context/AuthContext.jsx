@@ -8,16 +8,32 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-            try {
-                setUser(JSON.parse(storedUser));
-            } catch (error) {
-                console.error("Failed to parse user from local storage", error);
-                localStorage.removeItem("user");
+        const checkSession = () => {
+            const storedUser = localStorage.getItem("user");
+            const lastLoginTime = localStorage.getItem("lastLoginTime");
+
+            if (storedUser && lastLoginTime) {
+                const now = new Date().getTime();
+                const lastLogin = parseInt(lastLoginTime);
+                const hoursSinceLastLogin = (now - lastLogin) / (1000 * 60 * 60);
+
+                if (hoursSinceLastLogin > 24) {
+                    localStorage.removeItem("user");
+                    localStorage.removeItem("lastLoginTime");
+                    setUser(null);
+                } else {
+                    try {
+                        setUser(JSON.parse(storedUser));
+                    } catch (error) {
+                        console.error("Failed to parse user from local storage", error);
+                        localStorage.removeItem("user");
+                    }
+                }
             }
-        }
-        setLoading(false);
+            setLoading(false);
+        };
+
+        checkSession();
     }, []);
 
     const login = (userData) => {

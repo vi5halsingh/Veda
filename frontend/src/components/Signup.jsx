@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import api from "../config/Api";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Signup(props) {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [data, setData] = useState({
     email: "",
     fullname: {
@@ -20,7 +21,7 @@ export default function Signup(props) {
     try {
       const response = await api.post("/auth/register", data);
       if (response.status === 200) {
-        localStorage.setItem("user", JSON.stringify(response.data.user));
+        login(response.data.user);
         localStorage.setItem("lastLoginTime", new Date().getTime().toString());
         
         toast.success("Registered successfully !", {

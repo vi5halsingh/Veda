@@ -1,40 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
+import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import api from "../config/Api";
 import { toast } from "react-toastify";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login(props) {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [data, setData] = useState({
     email: "",
     password: "",
   });
-  React.useEffect(() => {
-    const checkSessionExpiration = () => {
-      const user = localStorage.getItem("user");
-      const lastLoginTime = localStorage.getItem("lastLoginTime");
-
-      if (user && lastLoginTime) {
-        const now = new Date().getTime();
-        const lastLogin = parseInt(lastLoginTime);
-        const hoursSinceLastLogin = (now - lastLogin) / (1000 * 60 * 60);
-
-        if (hoursSinceLastLogin > 24) {
-          localStorage.removeItem("user");
-          localStorage.removeItem("lastLoginTime");
-          toast.info("Session expired. Please login again.", {
-            position: "bottom-right",
-            closeOnClick: true,
-            pauseOnHover: true,
-            autoClose: 1000,
-          });
-          navigate("/auth");
-        }
-      }
-    };
-
-    checkSessionExpiration();
-  }, [navigate]);
+  // Session expiration is now handled in AuthContext.jsx
   const handleSubmit = async (e) => {
     e.preventDefault();
     // console.log(data);
@@ -44,7 +22,7 @@ export default function Login(props) {
       const response = await api.post("/auth/login", data);
 
       if (response.status === 200) {
-        localStorage.setItem("user", JSON.stringify(response.data.user));
+        login(response.data.user);
         localStorage.setItem("lastLoginTime", new Date().getTime().toString());
         navigate("/");
       }
