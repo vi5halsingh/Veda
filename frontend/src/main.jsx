@@ -4,6 +4,7 @@ import './index.css'
 import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import { registerSW } from 'virtual:pwa-register'
+import { AuthProvider } from './context/AuthContext'
 
 registerSW({
     registerType: 'prompt',
@@ -17,15 +18,15 @@ registerSW({
                     cacheName: 'veda-cache',
                 }
             },
-            
+
         ]
     }
 })
 
 createRoot(document.getElementById('root')).render(
-
-    <BrowserRouter>
-    <App />
-    </BrowserRouter>
-  
+    <AuthProvider>
+        <BrowserRouter>
+            <App />
+        </BrowserRouter>
+    </AuthProvider>
 )

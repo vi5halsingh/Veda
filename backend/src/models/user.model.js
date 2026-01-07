@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 30,
     },
+    timezone: {
+      type: String,
+      default: null, // Falls back to system timezone when null
+    },
     // tokenResetAt: {
     //   type: Date,
     //   default: () => new Date(new Date().getTime() + 24 * 60 * 60 * 1000),

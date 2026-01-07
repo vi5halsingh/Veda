@@ -23,9 +23,11 @@ app.use(cors({
 }));
 const authRoutes = require("./routes/auth.routes");
 const chatRoutes = require("./routes/chat.routes");
+const mcpRoutes = require("./routes/mcp.routes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/mcp", mcpRoutes);
 
 app.get('*name', (req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
