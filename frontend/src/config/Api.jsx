@@ -1,10 +1,14 @@
 import axios from "axios";
 
 // Create axios instance
+const baseURL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+
+if (!import.meta.env.VITE_API_URL) {
+  console.warn("VITE_API_URL is not defined in .env, falling back to localhost:3000/api");
+}
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  // For local development, uncomment below:
-  // baseURL: "http://localhost:3000/api",
+  baseURL,
   headers: {
     "Content-Type": "application/json",
   },

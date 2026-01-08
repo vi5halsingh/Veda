@@ -37,8 +37,8 @@ const Chat = () => {
 
   const handleSelectChat = (chat) => {
     setSelectedChat(chat);
-
-    // Socket handling will be implemented here
+    // Close sidebar on mobile after selecting a chat
+    setIsSidebarOpen(false);
   };
 
   return (

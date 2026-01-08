@@ -1,125 +1,174 @@
-Veda-Ai: Intelligent Chat Application
+# Veda AI - High-Performance Intelligent Chat Ecosystem
+
 <p align="center">
-<img src="./frontend/public/logo.svg" alt="Veda-Ai Banner"/>
+  <img src="./frontend/public/logo.svg" alt="Veda AI Logo" width="120" />
 </p>
 
 <p align="center">
-<strong>A modern, intelligent chat application powered by Google's Gemini and a persistent memory vector database.</strong>
-<br /><br />
-<!-- <img src="https://www.google.com/search?q=https://img.shields.io/badge/license-MIT-blue.svg" alt="License"> -->
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/React-20232A%3Fstyle%3Dfor-the-badge%26logo%3Dreact%26logoColor%3D61DAFB" alt="React">
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/Node.js-339933%3Fstyle%3Dfor-the-badge%26logo%3Dnodedotjs%26logoColor%3Dwhite" alt="Node.js">
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/MongoDB-4EA94B%3Fstyle%3Dfor-the-badge%26logo%3Dmongodb%26logoColor%3Dwhite" alt="MongoDB">
+  <strong>A production-grade, real-time AI chat application powered by Google Gemini, Pinecone Vector Memory, and the Model Context Protocol (MCP).</strong>
 </p>
 
-Veda-Ai is a full-stack, real-time chat application designed to provide intelligent, context-aware conversations. It leverages Google's Gemini for natural language processing and Pinecone's vector database to give the AI long-term memory, allowing for more coherent and meaningful interactions over time.
+---
 
-Screenshots
-Veda auth Interface 
-<img src="https://ik.imagekit.io/vi5hal/Veda/veda%20auth.png?updatedAt=1756537496077" alt="auth Interface"/>
+## 🏗️ Industry-Level Architecture
 
-Chat Interface 
-<img src="https://ik.imagekit.io/vi5hal/Veda/veda%20formated.png?updatedAt=1756537496117" alt="Chat Interface"/>
+Veda AI is built using a modern, scalable micro-architecture designed for persistence, intelligence, and real-time interaction.
 
-Dashboard Interface 
-<img src="https://ik.imagekit.io/vi5hal/Veda/veda%20chatscreen.png?updatedAt=1756537495937" alt="dashboard Interface"/>
+### System Overview
+- **Core Engine:** Node.js Express Server handling authentication, chat orchestration, and AI service integration.
+- **Real-time Layer:** Socket.io for low-latency, bi-directional communication between the client and server.
+- **Intelligence Layer:** Google Gemini 1.5/2.0 Pro for LLM capabilities, integrated via `@google/genai`.
+- **Memory Layer:** Pinecone Vector Database for long-term "semantic" memory, enabling context-aware retrieval (RAG).
+- **Extensibility:** Integrated **Model Context Protocol (MCP)** server for standardized tool-calling and system awareness.
+- **Persistence:** MongoDB with Mongoose for structured data (Users, Chat History, Metadata).
 
+---
 
-✨ Features
-Real-Time Chat Interface: Smooth, responsive conversations powered by Socket.IO.
+## ✨ Key Features
 
-AI-Powered Responses: Integrated with Google's Gemini for intelligent, human-like answers.
+- 🧠 **Persistent AI Memory:** Uses Pinecone to store and retrieve conversation embeddings, giving the AI long-term memory across sessions.
+- 🛠️ **MCP Integration:** A dedicated MCP server allows the AI to interact with system tools, fetch live data, and understand user context (Time, Timezone, System Context).
+- ⚡ **Real-Time Streaming:** Fluid chat experience with Socket.io and AI response streaming.
+- 🔐 **Enterprise Auth:** Secure JWT-based authentication with HTTP-only cookie storage and protected route middleware.
+- 🎨 **Premium UI/UX:** Built with React 19, Vite, and Tailwind CSS 4.0, featuring:
+  - Markdown Support with Syntax Highlighting.
+  - Dark/Light Mode.
+  - Responsive Sidebar & Chat Management.
+  - **PWA Ready:** Mobile-friendly Progressive Web App integration.
+- 📊 **Usage Management:** Built-in token/message limits per user (Default: 30 messages/day).
 
-Persistent Memory: Uses Pinecone vector database to remember context from past conversations.
+---
 
-Markdown & Code Rendering: Beautifully formats AI responses, including syntax-highlighted code blocks.
+## 🛠️ Tech Stack & Versions
 
-User Authentication: Secure registration, login, and session management using JWT cookies.
+| Layer | Technology | Version |
+| :--- | :--- | :--- |
+| **Frontend** | React | `^19.1.1` |
+| | Vite | `^7.1.2` |
+| | Tailwind CSS | `^4.1.12` |
+| | Socket.io Client | `^4.8.1` |
+| **Backend** | Node.js | `^18.x / 20.x` |
+| | Express | `^5.1.0` |
+| | Mongoose | `^8.17.1` |
+| | Socket.io | `^4.8.1` |
+| **AI/ML** | Google GenAI | `^1.14.0` |
+| | Pinecone SDK | `^6.1.2` |
+| | MCP SDK | `^1.25.1` |
 
-Light & Dark Mode: A user-selectable theme toggle for personalized comfort.
+---
 
-Daily Message Limit: A built-in rate limit of 30 messages per user every 24 hours to ensure fair usage.
+## 🚀 Getting Started
 
-Full Chat Management: Users can create, rename, and delete their conversations.
+### Prerequisites
+- **Node.js** (v18.0.0 or higher)
+- **MongoDB** (Local instance or Atlas)
+- **Google AI Studio API Key** (for Gemini)
+- **Pinecone API Key & Index** (Index name: `veda`)
 
-🛠️ Tech Stack
-Frontend
+### 📦 Installation
 
-Backend
+1. **Clone the Project**
+   ```bash
+   git clone https://github.com/vi5halsingh/Veda.git
+   cd Veda
+   ```
 
-React & Vite
+2. **Backend Setup**
+   ```bash
+   cd backend
+   npm install
+   ```
+   Create a `.env` file in the `backend/` directory:
+   ```env
+   PORT=3000
+   MONGO_URI=your_mongodb_uri
+   JWT_SECRET=your_jwt_secret
+   GEMINI_API_KEY=your_google_gemini_key
+   PINECONE_API_KEY=your_pinecone_key
+   MCP_API_KEY=your_internal_mcp_api_key
+   ```
 
-Node.js & Express
+3. **Frontend Setup**
+   ```bash
+   cd ../frontend
+   npm install
+   ```
+   Create a `.env` file in the `frontend/` directory:
+   ```env
+   VITE_API_URL=http://localhost:3000/api
+   ```
 
-Tailwind CSS
+---
 
-Socket.IO for real-time communication
+## ⚙️ Running the Application
 
-Socket.IO Client
+### Development Mode
+Run the backend and frontend simultaneously:
 
-MongoDB with Mongoose
-
-React Markdown
-
-Google Gemini API for AI generation
-
-React Syntax Highlighter
-
-Pinecone for vector storage and memory
-
-Axios
-
-JSON Web Token (JWT) for authentication
-
-🚀 Getting Started
-Follow these instructions to get a copy of the project up and running on your local machine.
-
-Prerequisites
-Node.js (v18.x or later)
-
-MongoDB instance (local or Atlas)
-
-API keys for Google Gemini and Pinecone.
-
-Installation
-Clone the repository:
-
-git clone [https://github.com/your-username/veda-ai.git](https://github.com/your-username/veda-ai.git)
-cd veda-ai
-
-Setup the Backend:
-
+**Terminal 1: Backend**
+```bash
 cd backend
-npm install
-
-Create a .env file in the backend directory by copying .env.example and fill in your credentials.
-
-# backend/.env
-MONGO_URI="your_mongodb_connection_string"
-JWT_SECRET="your_strong_jwt_secret"
-GEMINI_API_KEY="your_google_gemini_api_key"
-PINECONE_API_KEY="your_pinecone_api_key"
-
-Setup the Frontend:
-
-cd ../frontend
-npm install
-
-Run the Application:
-
-Start the backend server (from the backend directory):
-
-npm start 
-# Or use nodemon for development
-# nodemon server.js
-
-Start the frontend development server (from the frontend directory):
-
 npm run dev
+```
 
-The application should now be running at http://localhost:5173.
+**Terminal 2: Frontend**
+```bash
+cd frontend
+npm run dev
+```
 
-📜 License
-This project is licensed under the MIT License - see the LICENSE.md file for details.
+**Terminal 3: MCP Server (Optional/Inspection)**
+```bash
+cd backend
+npm run mcp
+# Or use inspector
+npm run inspect
+```
 
-This README was generated with assistance from an AI.
+The application will be available at `http://localhost:5173`.
+
+---
+
+## 📁 Project Structure
+
+```text
+Veda/
+├── backend/
+│   ├── src/
+│   │   ├── controllers/      # Request handlers
+│   │   ├── db/               # Database connection
+│   │   ├── mcp/              # MCP tool definitions & handlers
+│   │   ├── models/           # Mongoose schemas (User, Chat, Message)
+│   │   ├── routes/           # Express routes (Auth, Chat, MCP)
+│   │   ├── services/         # Business logic (AI, Vector, MCP)
+│   │   ├── sockets/          # Socket.io events
+│   │   └── server.js         # Entry point
+│   └── public/               # Static assets
+├── frontend/
+│   ├── src/
+│   │   ├── components/       # Reusable UI components
+│   │   ├── pages/            # View components (Login, Dashboard)
+│   │   ├── services/         # API integration
+│   │   ├── config/           # Axios & Route configs
+│   │   └── App.jsx           # Main application logic
+│   └── public/               # Frontend assets
+└── README.md
+```
+
+---
+
+## 🛡️ Security Features
+- **CORS Protection:** Configured with specific origins and credentials.
+- **JWT Auth:** Token-based security for all sensitive endpoints.
+- **Rate Limiting:** Message limits to prevent API abuse.
+- **Error Handling:** Centralized server-side error management.
+
+---
+
+## 📜 License
+This project is licensed under the MIT License.
+
+---
+<p align="center">
+  Built with ❤️ by <a href="https://github.com/vi5halsingh">Vishal Singh</a>
+</p>
