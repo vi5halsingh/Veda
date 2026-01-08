@@ -1,10 +1,10 @@
 import axios from "axios";
 
 // Create axios instance
-const baseURL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const baseURL = import.meta.env.VITE_API_URL || "https://veda-kx60.onrender.com/api";
 
 if (!import.meta.env.VITE_API_URL) {
-  console.warn("VITE_API_URL is not defined in .env, falling back to localhost:3000/api");
+  console.warn("VITE_API_URL is not defined in .env, falling back to https://veda-kx60.onrender.com/api");
 }
 
 const api = axios.create({
