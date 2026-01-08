@@ -9,7 +9,12 @@ const tools = [
         description: "Get the exact current time, date, day of week, and timezone. Always call this tool for time-related queries - never assume or guess time.",
         inputSchema: {
             type: "object",
-            properties: {},
+            properties: {
+                timezone: {
+                    type: "string",
+                    description: "Optional IANA timezone identifier (e.g., 'Asia/Kolkata'). If not provided, defaults to the user's profile timezone or system timezone."
+                }
+            },
             required: [],
         },
     },

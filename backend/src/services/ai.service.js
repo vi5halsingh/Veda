@@ -8,12 +8,21 @@ const {
 } = require("../mcp/handlers");
 
 // Execute MCP tool and return result
-async function executeMcpTool(toolName, args) {
+async function executeMcpTool(toolName, args, context = {}) {
+  const { userId, userTimezone } = context;
+
+  // Merge user context into args if not explicitly provided by AI
+  const mergedArgs = {
+    timezone: userTimezone,
+    userId: userId,
+    ...args
+  };
+
   switch (toolName) {
     case "getCurrentTime":
-      return await handleGetCurrentTime();
+      return await handleGetCurrentTime(mergedArgs);
     case "fetchLiveData":
-      return await handleFetchLiveData(args);
+      return await handleFetchLiveData(mergedArgs);
     default:
       return { success: false, error: `Unknown tool: ${toolName}` };
   }
@@ -167,7 +176,33 @@ ${commonInstructions}`;
 async function generateResponse(content, options = {}) {
   const model = options.model || "gemini-2.5-flash";
   const temperature = options.temperature || 0.7;
-  const systemInstruction = getSystemPrompt(options.role);
+  let systemInstruction = getSystemPrompt(options.role);
+
+  // Inject real-time context into the system prompt
+  const now = new Date();
+  const userTz = options.userTimezone || "UTC";
+
+  // Format dates according to user timezone for the prompt
+  const userDateStr = now.toLocaleDateString('en-US', {
+    timeZone: userTz,
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+  const userTimeStr = now.toLocaleTimeString('en-US', {
+    timeZone: userTz,
+    hour12: true,
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  const timeContext = `\n\n### System Awareness
+- Current Time: ${userTimeStr} (${userTz})
+- Today's Date: ${userDateStr}
+- Server UTC: ${now.toISOString()}
+`;
+  systemInstruction += timeContext;
 
   const response = await ai.models.generateContent({
     model: model,
@@ -182,12 +217,15 @@ async function generateResponse(content, options = {}) {
 
   // Check if AI wants to call a tool
   const toolCallMatch = responseText.match(/```tool_call\s*([\s\S]*?)\s*```/);
-  
+
   if (toolCallMatch) {
     try {
       const toolCall = JSON.parse(toolCallMatch[1]);
-      const toolResult = await executeMcpTool(toolCall.tool, toolCall.args || {});
-      
+      const toolResult = await executeMcpTool(toolCall.tool, toolCall.args || {}, {
+        userId: options.userId,
+        userTimezone: options.userTimezone
+      });
+
       const updatedContent = [
         ...content,
         { role: "model", parts: [{ text: responseText }] },
@@ -203,7 +241,7 @@ async function generateResponse(content, options = {}) {
       return finalResponse.text;
     } catch (error) {
       console.error("Tool error:", error);
-      return responseText.replace(/```tool_call[\s\S]*?```/g, "").trim() || 
+      return responseText.replace(/```tool_call[\s\S]*?```/g, "").trim() ||
         "Couldn't fetch real-time data. Try again.";
     }
   }

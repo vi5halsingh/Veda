@@ -133,7 +133,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
             // ========== New Contextual Awareness Tools ==========
             case "getCurrentTime": {
-                const result = await handleGetCurrentTime();
+                const result = await handleGetCurrentTime(args);
                 return {
                     content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
                 };

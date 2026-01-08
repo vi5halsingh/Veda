@@ -42,11 +42,32 @@ function getOrCreateSession(sessionId) {
 /**
  * Handler: getCurrentTime
  * Returns the exact current time, date, day of week, and timezone
+ * @param {object} args - { timezone }
  */
-async function handleGetCurrentTime() {
+async function handleGetCurrentTime(args = {}) {
+    const { timezone, userId } = args;
     const now = new Date();
-    const systemTz = getSystemTimezone();
-    const formatted = formatTimeForTimezone(now, systemTz);
+
+    let targetedTz = timezone;
+
+    // If no timezone but userId is provided, try to get from user profile
+    if (!targetedTz && userId) {
+        try {
+            const user = await userModel.findById(userId).select("timezone");
+            if (user && user.timezone && isValidTimezone(user.timezone)) {
+                targetedTz = user.timezone;
+            }
+        } catch (error) {
+            console.error("MCP: Error fetching user timezone:", error);
+        }
+    }
+
+    // Fallback to system default
+    if (!targetedTz || !isValidTimezone(targetedTz)) {
+        targetedTz = getSystemTimezone();
+    }
+
+    const formatted = formatTimeForTimezone(now, targetedTz);
 
     return {
         success: true,

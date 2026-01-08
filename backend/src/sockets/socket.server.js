@@ -143,6 +143,8 @@ async function initSocketServer(httpServer) {
           model: messagePayload.model,
           temperature: messagePayload.temperature,
           role: messagePayload.role,
+          userTimezone: socket.user.timezone,
+          userId: socket.user._id,
         });
 
         // console.log(response);
