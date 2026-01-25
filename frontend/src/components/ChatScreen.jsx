@@ -48,24 +48,6 @@ const SettingsPanel = ({ settings, setSettings, closePanel }) => {
         </button>
       </div>
       <div className="space-y-4">
-        {/* Role (Persona) Selection */}
-        <div>
-          <label className="block text-sm font-medium text-[#d1d5db] mb-1">
-            Persona
-          </label>
-          <select
-            value={settings.role}
-            onChange={(e) => setSettings({ ...settings, role: e.target.value })}
-            className="w-full px-3 py-2 border border-[#404040] rounded-lg focus:ring-2 focus:ring-[#3b82f6] focus:border-[#3b82f6] focus:outline-none bg-[#0f0f0f] text-[#f3f4f6] hover:border-[#3b82f6] transition-colors"
-          >
-            <option value="default">Veda</option>
-            <option value="funny">Funny</option>
-            <option value="spiritual">Spiritual</option>
-            <option value="Girl">Girl</option>
-            <option value="Gen-Z">Gen-Z</option>
-          </select>
-        </div>
-
         {/* Temperature Control */}
         <div>
           <label className="flex justify-between text-sm font-medium text-[#d1d5db] mb-1">
