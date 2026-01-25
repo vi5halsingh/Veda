@@ -57,7 +57,8 @@ async function initSocketServer(httpServer) {
   io.on("connection", (socket) => {
     // console.log("connected to socket")
     socket.on("ai-message", async (messagePayload) => {
-      // console.log(messagePayload)
+      // Debug: Check if location is being received
+      console.log("User Location received:", messagePayload.userLocation);
 
 
       // Immediately notify the client that the AI is "typing"

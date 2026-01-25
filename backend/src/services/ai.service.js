@@ -35,17 +35,37 @@ async function executeMcpTool(toolName, args, context = {}) {
 
 // Common instructions for all interactions
 const commonInstructions = `
-## Real-Time Data Tools
-You have tools for live data:
-1. **getCurrentTime** - For time/date/day queries
-2. **getWeather** - For weather queries. Call with NO args to use user's current GPS location, OR provide city name
+## Real-Time Data Tools (MANDATORY)
+You MUST use these tools for real-time data. NEVER guess or refuse - always call the tool.
+
+### Available Tools:
+1. **getCurrentTime** - For any time/date/day queries
+2. **getWeather** - For ANY weather query. User's GPS location is automatically available.
 3. **fetchLiveData** - For news, stocks, or other external APIs
 
-To use a tool:
+### EXACT FORMAT TO CALL A TOOL:
+You must output EXACTLY this format (markdown code block with tool_call):
+
 \`\`\`tool_call
 {"tool": "getWeather", "args": {}}
 \`\`\`
-Note: For weather at "my location" or "current location", call getWeather with empty args - GPS coordinates are automatically used.
+
+WRONG formats (DO NOT USE):
+- print(json.dumps(...)) ❌
+- json.dumps(...) ❌
+- Just JSON without code block ❌
+
+CORRECT format (USE THIS):
+\`\`\`tool_call
+{"tool": "getWeather", "args": {}}
+\`\`\`
+
+### Weather Queries - ALWAYS USE TOOL:
+- ANY weather question → output the tool_call code block above
+- "my location", "current location", "here" → args: {}
+- Specific city → args: {"city": "CityName"}
+- NEVER say you don't know location - GPS is provided automatically
+- NEVER refuse - just call the tool
 
 ## CRITICAL RULES
 
