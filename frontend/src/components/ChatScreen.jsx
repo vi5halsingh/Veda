@@ -84,8 +84,15 @@ const SettingsPanel = ({ settings, setSettings, closePanel }) => {
             }
             className="w-full px-3 py-2 border border-[#404040] rounded-lg focus:ring-2 focus:ring-[#3b82f6] focus:border-[#3b82f6] focus:outline-none bg-[#0f0f0f] text-[#f3f4f6] hover:border-[#3b82f6] transition-colors"
           >
-            <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-            <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+            <optgroup label="Gemini 3 (Latest)">
+              <option value="gemini-3-pro-preview">Gemini 3 Pro</option>
+              <option value="gemini-3-flash-preview">Gemini 3 Flash</option>
+            </optgroup>
+            <optgroup label="Gemini 2.5 (Stable)">
+              <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+              <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+              <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
+            </optgroup>
           </select>
         </div>
       </div>
