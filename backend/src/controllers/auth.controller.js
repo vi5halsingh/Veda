@@ -26,10 +26,13 @@ async function userRegister(req, res) {
     expiresIn: "24h",
   });
 
-  // Set cookie - simple settings for local development
+  // Set cookie - settings for local development with CORS
   res.cookie("token", token, {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    sameSite: "lax", // Required for cross-origin cookies in development
+    secure: false, // Set to true in production with HTTPS
+    path: "/",
   });
 
   return res.status(200).json({
@@ -61,10 +64,13 @@ async function loginUser(req, res) {
     expiresIn: "24h",
   });
   // console.log("token from login", token)
-  // Set cookie - simple settings for local development
+  // Set cookie - settings for local development with CORS
   res.cookie("token", token, {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    sameSite: "lax", // Required for cross-origin cookies in development
+    secure: false, // Set to true in production with HTTPS
+    path: "/",
   });
 
   return res.status(200).json({

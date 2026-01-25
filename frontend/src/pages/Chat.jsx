@@ -15,12 +15,14 @@ const Chat = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
   const navigate = useNavigate();
-  const user = localStorage.getItem("user");
 
-  if (!user) {
-    navigate("/auth-user");
-    return null;
-  }
+  // Check auth on mount - using useEffect to avoid render-time navigation
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (!user) {
+      navigate("/auth-user");
+    }
+  }, [navigate]);
 
   // Get user's geolocation on mount
   useEffect(() => {
@@ -66,6 +68,14 @@ const Chat = () => {
     // Close sidebar on mobile after selecting a chat
     setIsSidebarOpen(false);
   };
+
+  // Get user from localStorage for passing to components
+  const user = localStorage.getItem("user");
+
+  // Don't render if no user (redirect will happen via useEffect)
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="flex h-screen overflow-hidden">
