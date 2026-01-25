@@ -158,7 +158,7 @@ async function generateResponse(content, options = {}) {
 
   // Inject real-time context into the system prompt
   const now = new Date();
-  const userTz = options.userTimezone || "UTC";
+  const userTz = options.userTimezone || "Asia/Kolkata"; // Default to India timezone
 
   // Format dates according to user timezone for the prompt
   const userDateStr = now.toLocaleDateString('en-US', {

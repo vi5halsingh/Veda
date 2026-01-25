@@ -62,9 +62,9 @@ async function handleGetCurrentTime(args = {}) {
         }
     }
 
-    // Fallback to system default
+    // Fallback to India timezone (Asia/Kolkata) as default
     if (!targetedTz || !isValidTimezone(targetedTz)) {
-        targetedTz = getSystemTimezone();
+        targetedTz = "Asia/Kolkata";
     }
 
     const formatted = formatTimeForTimezone(now, targetedTz);
