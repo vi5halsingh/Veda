@@ -4,23 +4,28 @@ const ai = new GoogleGenAI({});
 // Import MCP handlers for real-time data
 const {
   handleGetCurrentTime,
+  handleGetWeather,
   handleFetchLiveData,
 } = require("../mcp/handlers");
 
 // Execute MCP tool and return result
 async function executeMcpTool(toolName, args, context = {}) {
-  const { userId, userTimezone } = context;
+  const { userId, userTimezone, userLocation } = context;
 
   // Merge user context into args if not explicitly provided by AI
   const mergedArgs = {
     timezone: userTimezone,
     userId: userId,
-    ...args
+    // Include user's coordinates if available (for location-based tools like weather)
+    ...(userLocation && { lat: userLocation.lat, lon: userLocation.lon }),
+    ...args // AI-provided args take precedence
   };
 
   switch (toolName) {
     case "getCurrentTime":
       return await handleGetCurrentTime(mergedArgs);
+    case "getWeather":
+      return await handleGetWeather(mergedArgs);
     case "fetchLiveData":
       return await handleFetchLiveData(mergedArgs);
     default:
@@ -33,12 +38,14 @@ const commonInstructions = `
 ## Real-Time Data Tools
 You have tools for live data:
 1. **getCurrentTime** - For time/date/day queries
-2. **fetchLiveData** - For weather, news, external APIs
+2. **getWeather** - For weather queries. Call with NO args to use user's current GPS location, OR provide city name
+3. **fetchLiveData** - For news, stocks, or other external APIs
 
 To use a tool:
 \`\`\`tool_call
-{"tool": "getCurrentTime", "args": {}}
+{"tool": "getWeather", "args": {}}
 \`\`\`
+Note: For weather at "my location" or "current location", call getWeather with empty args - GPS coordinates are automatically used.
 
 ## CRITICAL RULES
 
@@ -224,7 +231,8 @@ async function generateResponse(content, options = {}) {
       const toolCall = JSON.parse(toolCallMatch[1]);
       const toolResult = await executeMcpTool(toolCall.tool, toolCall.args || {}, {
         userId: options.userId,
-        userTimezone: options.userTimezone
+        userTimezone: options.userTimezone,
+        userLocation: options.userLocation, // Pass user's coordinates for location-based tools
       });
 
       const updatedContent = [

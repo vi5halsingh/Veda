@@ -19,6 +19,28 @@ const tools = [
         },
     },
     {
+        name: "getWeather",
+        description: "Get current weather for a location. Use this for any weather-related queries. Provide either a city name OR latitude/longitude coordinates.",
+        inputSchema: {
+            type: "object",
+            properties: {
+                city: {
+                    type: "string",
+                    description: "City name (e.g., 'Mumbai', 'New York', 'London'). Can include country code like 'Mumbai,IN'."
+                },
+                lat: {
+                    type: "number",
+                    description: "Latitude coordinate (use with 'lon' for precise location)"
+                },
+                lon: {
+                    type: "number",
+                    description: "Longitude coordinate (use with 'lat' for precise location)"
+                }
+            },
+            required: [],
+        },
+    },
+    {
         name: "getUserTimezone",
         description: "Detect user's timezone from profile or request metadata. Falls back to system timezone if unavailable.",
         inputSchema: {

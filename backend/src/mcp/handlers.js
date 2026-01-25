@@ -85,6 +85,95 @@ async function handleGetCurrentTime(args = {}) {
 }
 
 /**
+ * Handler: getWeather
+ * Fetches current weather data from OpenWeather API
+ * @param {object} args - { city, lat, lon }
+ */
+async function handleGetWeather(args = {}) {
+    const { city, lat, lon } = args;
+    const apiKey = process.env.OPENWEATHER_API_KEY;
+
+    if (!apiKey) {
+        return {
+            success: false,
+            error: "OpenWeather API key not configured",
+        };
+    }
+
+    // Build the API URL based on provided parameters
+    let url;
+    if (lat && lon) {
+        // Use coordinates if provided
+        url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+    } else if (city) {
+        // Use city name
+        url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric`;
+    } else {
+        return {
+            success: false,
+            error: "Please provide either a city name or coordinates (lat, lon)",
+        };
+    }
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (response.status !== 200) {
+            return {
+                success: false,
+                error: data.message || "Failed to fetch weather data",
+            };
+        }
+
+        // Format the weather response
+        return {
+            success: true,
+            data: {
+                location: {
+                    city: data.name,
+                    country: data.sys?.country,
+                    coordinates: {
+                        lat: data.coord?.lat,
+                        lon: data.coord?.lon,
+                    },
+                },
+                weather: {
+                    condition: data.weather?.[0]?.main,
+                    description: data.weather?.[0]?.description,
+                    icon: data.weather?.[0]?.icon,
+                },
+                temperature: {
+                    current: Math.round(data.main?.temp),
+                    feelsLike: Math.round(data.main?.feels_like),
+                    min: Math.round(data.main?.temp_min),
+                    max: Math.round(data.main?.temp_max),
+                    unit: "°C",
+                },
+                details: {
+                    humidity: data.main?.humidity,
+                    pressure: data.main?.pressure,
+                    visibility: data.visibility ? Math.round(data.visibility / 1000) : null,
+                    windSpeed: data.wind?.speed,
+                    windDirection: data.wind?.deg,
+                    clouds: data.clouds?.all,
+                },
+                sun: {
+                    sunrise: data.sys?.sunrise ? new Date(data.sys.sunrise * 1000).toLocaleTimeString() : null,
+                    sunset: data.sys?.sunset ? new Date(data.sys.sunset * 1000).toLocaleTimeString() : null,
+                },
+                fetchedAt: new Date().toISOString(),
+            },
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error: `Failed to fetch weather: ${error.message}`,
+        };
+    }
+}
+
+/**
  * Handler: getUserTimezone
  * Detects user's timezone from profile or request metadata
  * @param {object} args - { userId, requestMetadata }
@@ -336,6 +425,7 @@ function updateSessionPlatform(sessionId, platform) {
 
 module.exports = {
     handleGetCurrentTime,
+    handleGetWeather,
     handleGetUserTimezone,
     handleGetSystemContext,
     handleFetchLiveData,

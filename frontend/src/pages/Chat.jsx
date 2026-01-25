@@ -13,6 +13,7 @@ const Chat = () => {
     model: "gemini-2.5-flash",
   });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
   const navigate = useNavigate();
   const user = localStorage.getItem("user");
 
@@ -20,6 +21,31 @@ const Chat = () => {
     navigate("/auth-user");
     return null;
   }
+
+  // Get user's geolocation on mount
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+          });
+          console.log("Location captured:", position.coords.latitude, position.coords.longitude);
+        },
+        (error) => {
+          console.warn("Geolocation error:", error.message);
+          // User denied or error - location will remain null
+        },
+        {
+          enableHighAccuracy: false,
+          timeout: 10000,
+          maximumAge: 300000, // Cache for 5 minutes
+        }
+      );
+    }
+  }, []);
+
   useEffect(() => {
     // Initialize socket connection
     // Use environment variable or fallback to deployed URL
@@ -57,6 +83,7 @@ const Chat = () => {
         modelSettings={modelSettings}
         setModelSettings={setModelSettings}
         toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        userLocation={userLocation}
       />
     </div>
   );

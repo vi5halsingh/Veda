@@ -99,6 +99,7 @@ export default function ChatScreen({
   modelSettings,
   setModelSettings,
   toggleSidebar,
+  userLocation,
 }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -197,11 +198,12 @@ export default function ChatScreen({
     if (!input.trim() || !socket) return;
     setMessages((prev) => [...prev, { role: "user", content: input }]);
 
-    // Include the dynamic model settings in the payload
+    // Include the dynamic model settings and user location in the payload
     socket.emit("ai-message", {
       chat: chat.id,
       content: input,
       ...modelSettings,
+      userLocation: userLocation, // Send coordinates for location-based features
     });
     setInput("");
   };

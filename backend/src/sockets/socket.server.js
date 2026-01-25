@@ -145,6 +145,7 @@ async function initSocketServer(httpServer) {
           role: messagePayload.role,
           userTimezone: socket.user.timezone,
           userId: socket.user._id,
+          userLocation: messagePayload.userLocation, // Pass user's coordinates for location-based features
         });
 
         // console.log(response);
