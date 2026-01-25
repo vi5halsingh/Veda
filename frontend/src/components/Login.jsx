@@ -128,7 +128,7 @@ export default function Login(props) {
 
         {/* Social Buttons */}
         <div className="space-y-3">
-          <button className="w-full border border-[#404040] py-2 rounded-lg flex items-center justify-center hover:bg-[#252525] transition-all text-[#f3f4f6]">
+          <button type="button" className="w-full border border-[#404040] py-2 rounded-lg flex items-center justify-center hover:bg-[#252525] transition-all text-[#f3f4f6]">
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="Google"
@@ -137,7 +137,7 @@ export default function Login(props) {
             Continue with Google
           </button>
 
-          <button className="w-full border border-[#404040] py-2 rounded-lg flex items-center justify-center hover:bg-[#252525] transition-all text-[#f3f4f6]">
+          <button type="button" className="w-full border border-[#404040] py-2 rounded-lg flex items-center justify-center hover:bg-[#252525] transition-all text-[#f3f4f6]">
             <img
               src="https://www.svgrepo.com/show/512317/github-142.svg"
               alt="GitHub"

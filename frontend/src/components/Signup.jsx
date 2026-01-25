@@ -23,7 +23,7 @@ export default function Signup(props) {
       if (response.status === 200) {
         login(response.data.user);
         localStorage.setItem("lastLoginTime", new Date().getTime().toString());
-        
+
         toast.success("Registered successfully !", {
           position: "bottom-right",
           autoClose: 2000,
@@ -34,7 +34,7 @@ export default function Signup(props) {
           theme: "dark",
           closeOnClick: true,
         });
-        
+
         navigate("/");
         return;
       }
@@ -50,19 +50,19 @@ export default function Signup(props) {
           theme: "light",
           closeOnClick: true,
         });
-      }else{
-          toast.error("Something went wrong", {
-        position: "bottom-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        closeOnClick: true,
-      });
+      } else {
+        toast.error("Something went wrong", {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          closeOnClick: true,
+        });
       }
-    
+
     }
   };
   const handleSetType = (e) => {
@@ -166,7 +166,7 @@ export default function Signup(props) {
 
         {/* Social Buttons */}
         <div className="space-y-3">
-          <button className="w-full border border-[#404040] py-2 rounded-lg flex items-center justify-center hover:bg-[#252525] transition-all text-[#f3f4f6]">
+          <button type="button" className="w-full border border-[#404040] py-2 rounded-lg flex items-center justify-center hover:bg-[#252525] transition-all text-[#f3f4f6]">
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="Google"
@@ -175,7 +175,7 @@ export default function Signup(props) {
             Sign up with Google
           </button>
 
-          <button className="w-full border border-[#404040] py-2 rounded-lg flex items-center justify-center hover:bg-[#252525] transition-all text-[#f3f4f6]">
+          <button type="button" className="w-full border border-[#404040] py-2 rounded-lg flex items-center justify-center hover:bg-[#252525] transition-all text-[#f3f4f6]">
             <img
               src="https://www.svgrepo.com/show/512317/github-142.svg"
               alt="GitHub"

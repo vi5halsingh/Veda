@@ -22,9 +22,15 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.status === 401) {
-      localStorage.removeItem("user");
-      localStorage.removeItem("lastLoginTime");
-      window.location.href = "/auth-user";
+      // Don't redirect if already on auth page (to prevent form reload on wrong credentials)
+      const isAuthPage = window.location.pathname === "/auth-user" ||
+        window.location.pathname === "/login" ||
+        window.location.pathname === "/register";
+      if (!isAuthPage) {
+        localStorage.removeItem("user");
+        localStorage.removeItem("lastLoginTime");
+        window.location.href = "/auth-user";
+      }
     }
     return Promise.reject(error);
   }

@@ -176,7 +176,8 @@ ${commonInstructions}`;
 async function generateResponse(content, options = {}) {
   const model = options.model || "gemini-2.5-flash";
   const temperature = options.temperature || 0.7;
-  let systemInstruction = getSystemPrompt(options.role);
+  // Always use "default" (Veda) role - ignoring any role passed from frontend
+  let systemInstruction = getSystemPrompt("default");
 
   // Inject real-time context into the system prompt
   const now = new Date();
